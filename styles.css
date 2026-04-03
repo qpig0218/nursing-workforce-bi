@@ -247,6 +247,9 @@ body::before {
 .level-layout,
 .scenario-layout,
 .signal-layout,
+.tier-layout,
+.region-layout,
+.turnover-layout,
 .frontline-layout {
   display: grid;
   gap: 28px;
@@ -648,6 +651,18 @@ body::before {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.tier-layout {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+}
+
+.region-layout {
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+}
+
+.turnover-layout {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+}
+
 .open-proxy {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -743,6 +758,301 @@ body::before {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.tier-cards,
+.driver-scopes {
+  display: grid;
+  gap: 22px;
+}
+
+.tier-card {
+  padding: 30px;
+}
+
+.tier-card__head,
+.structure-card__head,
+.region-card__head,
+.driver-card__head,
+.tier-card__meta,
+.driver-theme__meta,
+.tier-bridge__head,
+.tier-bridge__foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: start;
+}
+
+.tier-card__head h3,
+.region-card h3,
+.driver-card h3,
+.structure-card h4 {
+  margin: 8px 0 0;
+  font-family: var(--display);
+  font-size: 1.7rem;
+  line-height: 1.16;
+}
+
+.tier-card__stats,
+.tier-card__signals,
+.turnover-kpis,
+.structure-level-grid,
+.driver-card__reasons {
+  display: grid;
+  gap: 14px;
+}
+
+.tier-card__stats,
+.turnover-kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.tier-card__signals,
+.structure-level-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.tier-card__bars,
+.driver-card__themes,
+.tier-bridge {
+  display: grid;
+  gap: 16px;
+}
+
+.tier-card__bars {
+  margin-top: 22px;
+}
+
+.tier-card__bar,
+.tier-bridge__bar,
+.driver-theme {
+  display: grid;
+  gap: 10px;
+}
+
+.tier-card__track,
+.tier-bridge__track,
+.driver-theme__track {
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(18, 16, 15, 0.08);
+}
+
+.tier-card__fill,
+.tier-bridge__fill,
+.driver-theme__fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.tier-card__fill--survey,
+.tier-bridge__fill--survey {
+  background: linear-gradient(90deg, rgba(198, 139, 44, 0.56), rgba(198, 139, 44, 0.94));
+}
+
+.tier-card__fill--acute,
+.tier-bridge__fill--acute,
+.driver-theme__fill {
+  background: linear-gradient(90deg, rgba(182, 72, 43, 0.56), rgba(182, 72, 43, 0.96));
+}
+
+.tier-signal,
+.region-meta,
+.driver-reason,
+.turnover-kpi,
+.structure-card {
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(18, 16, 15, 0.08);
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.tier-signal span,
+.region-meta span,
+.tier-card__meta span,
+.tier-bridge__head span,
+.tier-bridge__foot span,
+.driver-card__head span,
+.driver-reason b {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.tier-signal strong,
+.region-meta strong,
+.tier-card__meta strong,
+.driver-reason strong,
+.region-card__rank strong {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--numeric);
+  font-size: 1.08rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.tier-card__advice {
+  margin-top: 18px;
+  padding: 18px 20px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(20, 95, 101, 0.08), rgba(255, 255, 255, 0.52));
+}
+
+.tier-card__advice b {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.tier-card__advice p,
+.driver-card p,
+.region-card__label {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.tier-bridge__row,
+.driver-card {
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(18, 16, 15, 0.08);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.tier-bridge__stack {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.region-layout,
+.turnover-layout {
+  align-items: start;
+}
+
+.region-map {
+  display: grid;
+  grid-template-columns: 0.9fr 1fr 0.82fr;
+  grid-template-areas:
+    ". taipei east"
+    "north central east"
+    "south kaoping east";
+  gap: 18px;
+}
+
+.region-card {
+  position: relative;
+  padding: 22px;
+  border-radius: 28px;
+  border: 1px solid rgba(18, 16, 15, 0.08);
+  background:
+    linear-gradient(180deg, rgba(182, 72, 43, var(--region-strength)), rgba(255, 255, 255, 0.82)),
+    rgba(255, 255, 255, 0.44);
+  overflow: hidden;
+}
+
+.region-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.56), transparent 55%);
+}
+
+.region-card--taipei {
+  grid-area: taipei;
+}
+
+.region-card--north {
+  grid-area: north;
+}
+
+.region-card--central {
+  grid-area: central;
+}
+
+.region-card--south {
+  grid-area: south;
+}
+
+.region-card--kaoping {
+  grid-area: kaoping;
+}
+
+.region-card--east {
+  grid-area: east;
+}
+
+.region-card__rank {
+  text-align: right;
+}
+
+.region-card__value {
+  margin-top: 18px;
+  font-family: var(--numeric);
+  font-size: 2.3rem;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.region-card__label {
+  margin-top: 8px;
+}
+
+.region-card__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.region-card__foot {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(18, 16, 15, 0.08);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.recommendation-panel {
+  margin-top: 28px;
+  padding: 34px;
+}
+
+.turnover-kpi__value {
+  font-size: clamp(1.8rem, 3vw, 2.75rem);
+}
+
+.structure-level-grid {
+  margin-top: 22px;
+}
+
+.structure-card__head span {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.structure-card__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.driver-card__themes {
+  margin-top: 18px;
+}
+
+.driver-card__reasons {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
 .table-list {
   display: grid;
   gap: 16px;
@@ -802,6 +1112,9 @@ body::before {
   .level-layout,
   .scenario-layout,
   .signal-layout,
+  .tier-layout,
+  .region-layout,
+  .turnover-layout,
   .frontline-layout {
     grid-template-columns: 1fr;
   }
@@ -809,8 +1122,20 @@ body::before {
   .hero-kpis,
   .open-proxy,
   .strategy-cards,
-  .scenario-cards {
+  .scenario-cards,
+  .turnover-kpis,
+  .tier-card__stats,
+  .tier-card__signals,
+  .structure-level-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .region-map {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "taipei east"
+      "north central"
+      "south kaoping";
   }
 
   .range-bar__meta {
@@ -837,6 +1162,9 @@ body::before {
   .open-proxy,
   .strategy-cards,
   .scenario-cards,
+  .turnover-kpis,
+  .structure-level-grid,
+  .tier-card__signals,
   .level-card__stats,
   .level-card__foot {
     grid-template-columns: 1fr;
@@ -866,7 +1194,11 @@ body::before {
   }
 
   .gap-group,
-  .gap-scenario {
+  .gap-scenario,
+  .tier-card__stats,
+  .driver-card__reasons,
+  .region-card__meta,
+  .structure-card__grid {
     grid-template-columns: 1fr;
   }
 
@@ -883,12 +1215,31 @@ body::before {
     flex-direction: column;
   }
 
+  .tier-card__head,
+  .driver-card__head,
+  .region-card__head,
+  .tier-bridge__head,
+  .tier-bridge__foot {
+    flex-direction: column;
+  }
+
   .gap-scenario {
     gap: 10px;
   }
 
   .gap-scenario__value {
     text-align: left;
+  }
+
+  .region-map {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "taipei"
+      "north"
+      "central"
+      "south"
+      "kaoping"
+      "east";
   }
 
   .proxy-card__group {

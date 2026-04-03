@@ -2,7 +2,7 @@ window.DASHBOARD_DATA = {
   "meta": {
     "title": "114年度醫院護產人力需求雜誌式 BI",
     "workbookName": "114年度「醫院護產人力資源」調查結果_人力.xlsx",
-    "generatedAt": "2026-04-03T03:21:53.525Z",
+    "generatedAt": "2026-04-03T05:09:56.904Z",
     "coverage": {
       "surveyHospitals": 459,
       "acuteRatioHospitals": 395,
@@ -27,7 +27,7 @@ window.DASHBOARD_DATA = {
     },
     "openBedsSource": {
       "title": "醫院評鑑資訊專區病床設施資料",
-      "accessedAt": "2026-04-03T03:21:53.525Z",
+      "accessedAt": "2026-04-03T05:09:56.905Z",
       "url": "https://openinfo.mohw.gov.tw/web/C01"
     }
   },
@@ -369,6 +369,113 @@ window.DASHBOARD_DATA = {
       }
     }
   ],
+  "levelWorkforceInsights": [
+    {
+      "level": "醫學中心",
+      "hospitals": 32,
+      "structure": {
+        "actualEmployed": 50470,
+        "fullTimeShare": 0.9647,
+        "rnShare": 0.985,
+        "vacancyBacklog": 4564,
+        "vacancyBacklogRate": 0.0904
+      },
+      "survey": {
+        "current": 14060,
+        "need": 14826,
+        "shortage": 1300,
+        "surplus": 534,
+        "fillRate": 0.9483
+      },
+      "bedPressure": {
+        "openBeds": 25853,
+        "midShortage": 177.1,
+        "midShortageShare": 0.3429,
+        "openBedDelta": -284
+      },
+      "flow": {
+        "hires": 6376,
+        "turnover": 4670,
+        "hireToTurnover": 1.365,
+        "under3Months": 1212,
+        "under3Share": 0.2595
+      },
+      "recommendation": {
+        "title": "把高強度夜班與重症單位留任做深",
+        "body": "醫學中心量體最大，建議把重症、急診與夜班誘因綁進進階職涯與技術加給，而不是只做一般性補人。"
+      }
+    },
+    {
+      "level": "區域醫院",
+      "hospitals": 83,
+      "structure": {
+        "actualEmployed": 48034,
+        "fullTimeShare": 0.9688,
+        "rnShare": 0.9652,
+        "vacancyBacklog": 5117,
+        "vacancyBacklogRate": 0.1065
+      },
+      "survey": {
+        "current": 11735,
+        "need": 12694,
+        "shortage": 1694,
+        "surplus": 735,
+        "fillRate": 0.9245
+      },
+      "bedPressure": {
+        "openBeds": 28046,
+        "midShortage": 247.6,
+        "midShortageShare": 0.4794,
+        "openBedDelta": -124
+      },
+      "flow": {
+        "hires": 6789,
+        "turnover": 4906,
+        "hireToTurnover": 1.384,
+        "under3Months": 1481,
+        "under3Share": 0.3019
+      },
+      "recommendation": {
+        "title": "先補足可調度的彈性班表",
+        "body": "區域醫院同時承接最大 survey 缺口與最大 acute 補班壓力，建議優先配置跨單位支援池與區域招募配額。"
+      }
+    },
+    {
+      "level": "地區醫院",
+      "hospitals": 344,
+      "structure": {
+        "actualEmployed": 26165,
+        "fullTimeShare": 0.956,
+        "rnShare": 0.9058,
+        "vacancyBacklog": 2802,
+        "vacancyBacklogRate": 0.1071
+      },
+      "survey": {
+        "current": 6555,
+        "need": 7045,
+        "shortage": 950,
+        "surplus": 460,
+        "fillRate": 0.9304
+      },
+      "bedPressure": {
+        "openBeds": 18538,
+        "midShortage": 91.8,
+        "midShortageShare": 0.1777,
+        "openBedDelta": -139
+      },
+      "flow": {
+        "hires": 4855,
+        "turnover": 3658,
+        "hireToTurnover": 1.327,
+        "under3Months": 1510,
+        "under3Share": 0.4128
+      },
+      "recommendation": {
+        "title": "把新進三個月內流失壓下來",
+        "body": "地區醫院家數最多且早離職占比最高，建議先從固定 preceptor、前三個月排班保護與區域共享培訓做起。"
+      }
+    }
+  ],
   "scenarios": [
     {
       "key": "low",
@@ -437,6 +544,1134 @@ window.DASHBOARD_DATA = {
       "weightedOccupancy": 1
     }
   ],
+  "regionalGapMap": [
+    {
+      "region": "臺北",
+      "hospitals": 106,
+      "acuteHospitals": 88,
+      "survey": {
+        "current": 9624,
+        "need": 10868,
+        "shortage": 1668,
+        "fillRate": 0.8855
+      },
+      "structure": {
+        "vacancyBacklog": 4924,
+        "vacancyBacklogRate": 0.1256
+      },
+      "bedPressure": {
+        "openBeds": 21612,
+        "midRequired": 4991.7,
+        "midShortage": 160.1,
+        "midShortageRate": 0.0321,
+        "shortagePer100Beds": 0.74
+      },
+      "dominantLevel": "醫學中心",
+      "dominantLevelShortage": 84.9,
+      "topHospitals": [
+        {
+          "name": "國立台灣大學醫學院附設醫院",
+          "level": "醫學中心",
+          "shortage": 30.2
+        },
+        {
+          "name": "衛生福利部雙和醫院(委託臺北醫學大學興建經營)",
+          "level": "醫學中心",
+          "shortage": 15.6
+        }
+      ],
+      "absoluteRank": 1,
+      "intensityRank": 2
+    },
+    {
+      "region": "北區",
+      "hospitals": 67,
+      "acuteHospitals": 58,
+      "survey": {
+        "current": 3938,
+        "need": 4404,
+        "shortage": 550,
+        "fillRate": 0.8942
+      },
+      "structure": {
+        "vacancyBacklog": 1919,
+        "vacancyBacklogRate": 0.1129
+      },
+      "bedPressure": {
+        "openBeds": 10569,
+        "midRequired": 2147.1,
+        "midShortage": 64.8,
+        "midShortageRate": 0.0302,
+        "shortagePer100Beds": 0.61
+      },
+      "dominantLevel": "區域醫院",
+      "dominantLevelShortage": 56.4,
+      "topHospitals": [
+        {
+          "name": "為恭醫療財團法人為恭紀念醫院",
+          "level": "區域醫院",
+          "shortage": 17.5
+        },
+        {
+          "name": "長庚醫療財團法人桃園長庚紀念醫院",
+          "level": "區域醫院",
+          "shortage": 11.3
+        }
+      ],
+      "absoluteRank": 4,
+      "intensityRank": 3
+    },
+    {
+      "region": "中區",
+      "hospitals": 103,
+      "acuteHospitals": 89,
+      "survey": {
+        "current": 5955,
+        "need": 6107,
+        "shortage": 461,
+        "fillRate": 0.9751
+      },
+      "structure": {
+        "vacancyBacklog": 1684,
+        "vacancyBacklogRate": 0.0646
+      },
+      "bedPressure": {
+        "openBeds": 14800,
+        "midRequired": 3160.3,
+        "midShortage": 94.4,
+        "midShortageRate": 0.0299,
+        "shortagePer100Beds": 0.64
+      },
+      "dominantLevel": "區域醫院",
+      "dominantLevelShortage": 59.4,
+      "topHospitals": [
+        {
+          "name": "中國醫藥大學附設醫院",
+          "level": "醫學中心",
+          "shortage": 18
+        },
+        {
+          "name": "衛生福利部豐原醫院",
+          "level": "區域醫院",
+          "shortage": 13.2
+        }
+      ],
+      "absoluteRank": 3,
+      "intensityRank": 4
+    },
+    {
+      "region": "南區",
+      "hospitals": 63,
+      "acuteHospitals": 55,
+      "survey": {
+        "current": 4160,
+        "need": 4587,
+        "shortage": 550,
+        "fillRate": 0.9069
+      },
+      "structure": {
+        "vacancyBacklog": 1206,
+        "vacancyBacklogRate": 0.0669
+      },
+      "bedPressure": {
+        "openBeds": 10488,
+        "midRequired": 2196.9,
+        "midShortage": 29.1,
+        "midShortageRate": 0.0132,
+        "shortagePer100Beds": 0.28
+      },
+      "dominantLevel": "區域醫院",
+      "dominantLevelShortage": 21.4,
+      "topHospitals": [
+        {
+          "name": "衛生福利部臺南醫院",
+          "level": "區域醫院",
+          "shortage": 6
+        },
+        {
+          "name": "佛教慈濟醫療財團法人大林慈濟醫院",
+          "level": "醫學中心",
+          "shortage": 5.6
+        }
+      ],
+      "absoluteRank": 5,
+      "intensityRank": 6
+    },
+    {
+      "region": "高屏",
+      "hospitals": 103,
+      "acuteHospitals": 89,
+      "survey": {
+        "current": 7879,
+        "need": 7644,
+        "shortage": 539,
+        "fillRate": 1.0307
+      },
+      "structure": {
+        "vacancyBacklog": 2340,
+        "vacancyBacklogRate": 0.1129
+      },
+      "bedPressure": {
+        "openBeds": 12992,
+        "midRequired": 2743.8,
+        "midShortage": 157.1,
+        "midShortageRate": 0.0573,
+        "shortagePer100Beds": 1.21
+      },
+      "dominantLevel": "區域醫院",
+      "dominantLevelShortage": 55.3,
+      "topHospitals": [
+        {
+          "name": "財團法人私立高雄醫學大學附設高醫岡山醫院",
+          "level": "地區醫院",
+          "shortage": 43.9
+        },
+        {
+          "name": "高雄榮民總醫院",
+          "level": "醫學中心",
+          "shortage": 23.6
+        }
+      ],
+      "absoluteRank": 2,
+      "intensityRank": 1
+    },
+    {
+      "region": "東區",
+      "hospitals": 17,
+      "acuteHospitals": 16,
+      "survey": {
+        "current": 794,
+        "need": 955,
+        "shortage": 176,
+        "fillRate": 0.8314
+      },
+      "structure": {
+        "vacancyBacklog": 410,
+        "vacancyBacklogRate": 0.1117
+      },
+      "bedPressure": {
+        "openBeds": 1976,
+        "midRequired": 407.2,
+        "midShortage": 11,
+        "midShortageRate": 0.027,
+        "shortagePer100Beds": 0.56
+      },
+      "dominantLevel": "醫學中心",
+      "dominantLevelShortage": 3.8,
+      "topHospitals": [
+        {
+          "name": "佛教慈濟醫療財團法人花蓮慈濟醫院",
+          "level": "醫學中心",
+          "shortage": 3.8
+        },
+        {
+          "name": "臺灣基督教門諾會醫療財團法人門諾醫院",
+          "level": "區域醫院",
+          "shortage": 3.2
+        }
+      ],
+      "absoluteRank": 6,
+      "intensityRank": 5
+    }
+  ],
+  "regionalFocusCards": [
+    {
+      "title": "臺北 缺口量最大",
+      "body": "臺北 的 acute 中推估缺口 160 人，主要壓力集中在 醫學中心。建議把跨院招募與關鍵單位補班優先放在此區。",
+      "accent": "rust"
+    },
+    {
+      "title": "高屏 缺口率最高",
+      "body": "高屏 每 100 張急性開床約對應 1.2 名中推估缺口，是六區中最緊的班表壓力帶。",
+      "accent": "ink"
+    },
+    {
+      "title": "東區 survey 填補率最低",
+      "body": "東區 目前 survey fill rate 為 83% ，即使量體較小，也代表補才、住宿與通勤支持要一起進場。",
+      "accent": "teal"
+    }
+  ],
+  "turnoverInsights": {
+    "overview": {
+      "actualEmployed": 124669,
+      "fullTimeShare": 0.9644,
+      "rnShare": 0.9607,
+      "hires": 18020,
+      "returnees": 2256,
+      "newGraduatesHired": 5354,
+      "turnover": 13234,
+      "under3Months": 4203,
+      "under3Share": 0.3176,
+      "hireToTurnover": 1.362,
+      "netRecruitment": 4786,
+      "salaryRaiseResponseHospitals": 449,
+      "salaryRaisedHospitals": 361,
+      "salaryRaisedRate": 0.804,
+      "averageRaiseAmount": 2459.6
+    },
+    "structureByLevel": [
+      {
+        "level": "醫學中心",
+        "actualEmployed": 50470,
+        "fullTimeShare": 0.9647,
+        "rnShare": 0.985,
+        "hireToTurnover": 1.365,
+        "under3Share": 0.2595
+      },
+      {
+        "level": "區域醫院",
+        "actualEmployed": 48034,
+        "fullTimeShare": 0.9688,
+        "rnShare": 0.9652,
+        "hireToTurnover": 1.384,
+        "under3Share": 0.3019
+      },
+      {
+        "level": "地區醫院",
+        "actualEmployed": 26165,
+        "fullTimeShare": 0.956,
+        "rnShare": 0.9058,
+        "hireToTurnover": 1.327,
+        "under3Share": 0.4128
+      }
+    ],
+    "salarySignals": {
+      "targetBreakdown": [
+        {
+          "target": "「全體」護理人員(含新進人員)",
+          "hospitals": 289
+        },
+        {
+          "target": "「部分單位」護理人員(含新進人員)",
+          "hospitals": 58
+        },
+        {
+          "target": "「只有新進人員」調薪",
+          "hospitals": 14
+        }
+      ],
+      "unitTargets": [
+        {
+          "label": "一般急性病房",
+          "hospitals": 42
+        },
+        {
+          "label": "急診室",
+          "hospitals": 28
+        },
+        {
+          "label": "重症及加護病房",
+          "hospitals": 21
+        },
+        {
+          "label": "門診",
+          "hospitals": 35
+        }
+      ]
+    },
+    "scopes": [
+      {
+        "key": "total",
+        "label": "整體離職",
+        "scope": "total",
+        "actionableThemeTotal": 10184,
+        "themeSignals": [
+          {
+            "theme": "職涯拉力",
+            "value": 4090,
+            "share": 0.4016
+          },
+          {
+            "theme": "家庭生活",
+            "value": 3061,
+            "share": 0.3006
+          },
+          {
+            "theme": "健康安全",
+            "value": 1065,
+            "share": 0.1046
+          },
+          {
+            "theme": "工作設計",
+            "value": 1049,
+            "share": 0.103
+          },
+          {
+            "theme": "薪酬",
+            "value": 643,
+            "share": 0.0631
+          },
+          {
+            "theme": "組織氣候",
+            "value": 276,
+            "share": 0.0271
+          }
+        ],
+        "reasonSignals": [
+          {
+            "key": "closure",
+            "label": "系統歇業",
+            "theme": "制度性退出",
+            "actionable": false,
+            "value": 14406
+          },
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 3224
+          },
+          {
+            "key": "other",
+            "label": "其他問題",
+            "theme": "未分類",
+            "actionable": false,
+            "value": 2199
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 1439
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 1018
+          },
+          {
+            "key": "childcare",
+            "label": "育嬰托育問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 912
+          },
+          {
+            "key": "retirement",
+            "label": "退休",
+            "theme": "生命週期",
+            "actionable": false,
+            "value": 851
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 818
+          },
+          {
+            "key": "commute",
+            "label": "通勤距離",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 710
+          },
+          {
+            "key": "salary",
+            "label": "薪資問題",
+            "theme": "薪酬",
+            "actionable": true,
+            "value": 643
+          },
+          {
+            "key": "workload",
+            "label": "無法管理的工作量",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 518
+          },
+          {
+            "key": "workLife",
+            "label": "工作-生活的不平衡",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 423
+          },
+          {
+            "key": "belonging",
+            "label": "沒有所屬感",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 110
+          },
+          {
+            "key": "interaction",
+            "label": "負向互動",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 110
+          },
+          {
+            "key": "schedule",
+            "label": "沒有彈性的工作排班",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 108
+          },
+          {
+            "key": "advancement",
+            "label": "沒有進階的潛能",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 48
+          },
+          {
+            "key": "unsafe",
+            "label": "沒有安全的工作環境",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 47
+          },
+          {
+            "key": "participation",
+            "label": "沒有工作的參與",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 37
+          },
+          {
+            "key": "notValued",
+            "label": "不被機構重視",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 19
+          }
+        ],
+        "actionableReasons": [
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 3224
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 1439
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 1018
+          },
+          {
+            "key": "childcare",
+            "label": "育嬰托育問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 912
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 818
+          },
+          {
+            "key": "commute",
+            "label": "通勤距離",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 710
+          }
+        ],
+        "attentionReasons": [
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 3224
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 1439
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 1018
+          },
+          {
+            "key": "childcare",
+            "label": "育嬰托育問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 912
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 818
+          },
+          {
+            "key": "commute",
+            "label": "通勤距離",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 710
+          }
+        ]
+      },
+      {
+        "key": "under3",
+        "label": "三個月內離職",
+        "scope": "under3",
+        "actionableThemeTotal": 3147,
+        "themeSignals": [
+          {
+            "theme": "職涯拉力",
+            "value": 1193,
+            "share": 0.3791
+          },
+          {
+            "theme": "工作設計",
+            "value": 597,
+            "share": 0.1897
+          },
+          {
+            "theme": "家庭生活",
+            "value": 561,
+            "share": 0.1783
+          },
+          {
+            "theme": "健康安全",
+            "value": 345,
+            "share": 0.1096
+          },
+          {
+            "theme": "組織氣候",
+            "value": 284,
+            "share": 0.0902
+          },
+          {
+            "theme": "薪酬",
+            "value": 167,
+            "share": 0.0531
+          }
+        ],
+        "reasonSignals": [
+          {
+            "key": "closure",
+            "label": "系統歇業",
+            "theme": "制度性退出",
+            "actionable": false,
+            "value": 4643
+          },
+          {
+            "key": "other",
+            "label": "其他問題",
+            "theme": "未分類",
+            "actionable": false,
+            "value": 1052
+          },
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 959
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 325
+          },
+          {
+            "key": "workload",
+            "label": "無法管理的工作量",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 313
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 293
+          },
+          {
+            "key": "workLife",
+            "label": "工作-生活的不平衡",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 253
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 225
+          },
+          {
+            "key": "commute",
+            "label": "通勤距離",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 190
+          },
+          {
+            "key": "salary",
+            "label": "薪資問題",
+            "theme": "薪酬",
+            "actionable": true,
+            "value": 167
+          },
+          {
+            "key": "belonging",
+            "label": "沒有所屬感",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 114
+          },
+          {
+            "key": "childcare",
+            "label": "育嬰托育問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 78
+          },
+          {
+            "key": "interaction",
+            "label": "負向互動",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 73
+          },
+          {
+            "key": "participation",
+            "label": "沒有工作的參與",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 51
+          },
+          {
+            "key": "notValued",
+            "label": "不被機構重視",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 46
+          },
+          {
+            "key": "schedule",
+            "label": "沒有彈性的工作排班",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 31
+          },
+          {
+            "key": "unsafe",
+            "label": "沒有安全的工作環境",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 20
+          },
+          {
+            "key": "advancement",
+            "label": "沒有進階的潛能",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 9
+          },
+          {
+            "key": "retirement",
+            "label": "退休",
+            "theme": "生命週期",
+            "actionable": false,
+            "value": 4
+          }
+        ],
+        "actionableReasons": [
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 959
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 325
+          },
+          {
+            "key": "workload",
+            "label": "無法管理的工作量",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 313
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 293
+          },
+          {
+            "key": "workLife",
+            "label": "工作-生活的不平衡",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 253
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 225
+          }
+        ],
+        "attentionReasons": [
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 959
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 325
+          },
+          {
+            "key": "workload",
+            "label": "無法管理的工作量",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 313
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 293
+          },
+          {
+            "key": "workLife",
+            "label": "工作-生活的不平衡",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 253
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 225
+          }
+        ]
+      },
+      {
+        "key": "newGrad",
+        "label": "應屆離職",
+        "scope": "newGrad",
+        "actionableThemeTotal": 346,
+        "themeSignals": [
+          {
+            "theme": "工作設計",
+            "value": 124,
+            "share": 0.3584
+          },
+          {
+            "theme": "職涯拉力",
+            "value": 100,
+            "share": 0.289
+          },
+          {
+            "theme": "健康安全",
+            "value": 51,
+            "share": 0.1474
+          },
+          {
+            "theme": "家庭生活",
+            "value": 49,
+            "share": 0.1416
+          },
+          {
+            "theme": "組織氣候",
+            "value": 20,
+            "share": 0.0578
+          },
+          {
+            "theme": "薪酬",
+            "value": 2,
+            "share": 0.0058
+          }
+        ],
+        "reasonSignals": [
+          {
+            "key": "other",
+            "label": "其他問題",
+            "theme": "未分類",
+            "actionable": false,
+            "value": 92
+          },
+          {
+            "key": "workload",
+            "label": "無法管理的工作量",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 81
+          },
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 68
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 51
+          },
+          {
+            "key": "workLife",
+            "label": "工作-生活的不平衡",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 42
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 31
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 24
+          },
+          {
+            "key": "commute",
+            "label": "通勤距離",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 23
+          },
+          {
+            "key": "belonging",
+            "label": "沒有所屬感",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 15
+          },
+          {
+            "key": "retirement",
+            "label": "退休",
+            "theme": "生命週期",
+            "actionable": false,
+            "value": 10
+          },
+          {
+            "key": "interaction",
+            "label": "負向互動",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 5
+          },
+          {
+            "key": "salary",
+            "label": "薪資問題",
+            "theme": "薪酬",
+            "actionable": true,
+            "value": 2
+          },
+          {
+            "key": "childcare",
+            "label": "育嬰托育問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 2
+          },
+          {
+            "key": "schedule",
+            "label": "沒有彈性的工作排班",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 1
+          },
+          {
+            "key": "advancement",
+            "label": "沒有進階的潛能",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 1
+          },
+          {
+            "key": "closure",
+            "label": "系統歇業",
+            "theme": "制度性退出",
+            "actionable": false,
+            "value": 0
+          },
+          {
+            "key": "notValued",
+            "label": "不被機構重視",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 0
+          },
+          {
+            "key": "unsafe",
+            "label": "沒有安全的工作環境",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 0
+          },
+          {
+            "key": "participation",
+            "label": "沒有工作的參與",
+            "theme": "組織氣候",
+            "actionable": true,
+            "value": 0
+          }
+        ],
+        "actionableReasons": [
+          {
+            "key": "workload",
+            "label": "無法管理的工作量",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 81
+          },
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 68
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 51
+          },
+          {
+            "key": "workLife",
+            "label": "工作-生活的不平衡",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 42
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 31
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 24
+          }
+        ],
+        "attentionReasons": [
+          {
+            "key": "workload",
+            "label": "無法管理的工作量",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 81
+          },
+          {
+            "key": "betterCareer",
+            "label": "更好的職業",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 68
+          },
+          {
+            "key": "health",
+            "label": "健康狀況",
+            "theme": "健康安全",
+            "actionable": true,
+            "value": 51
+          },
+          {
+            "key": "workLife",
+            "label": "工作-生活的不平衡",
+            "theme": "工作設計",
+            "actionable": true,
+            "value": 42
+          },
+          {
+            "key": "study",
+            "label": "進修升學",
+            "theme": "職涯拉力",
+            "actionable": true,
+            "value": 31
+          },
+          {
+            "key": "familyCare",
+            "label": "家庭照顧問題",
+            "theme": "家庭生活",
+            "actionable": true,
+            "value": 24
+          }
+        ]
+      }
+    ],
+    "recommendationCards": [
+      {
+        "title": "先處理新進三個月內的工作設計",
+        "body": "全年 4,203 人次落在三個月內離職，且可介入原因以工作量、排班彈性與 work-life 為主，建議先改前三個月排班與支援配置。",
+        "accent": "rust"
+      },
+      {
+        "title": "整體留任要用職涯路徑對抗外部拉力",
+        "body": "排除歇業與退休後，整體離職訊號仍以「更好的職業」最強，表示單靠補招不夠，還需要進階職涯、專長培育與晉升設計。",
+        "accent": "ink"
+      },
+      {
+        "title": "調薪已經普遍，但不能只靠加薪",
+        "body": "361 家醫院回報已調薪，平均每月增加約 2,460 元；但薪資並不是最強的可介入驅動，代表薪酬必須和班表、職涯與支持系統一起搭配。",
+        "accent": "teal"
+      }
+    ]
+  },
   "topMidShortageHospitals": [
     {
       "code": "1307020025",
@@ -659,7 +1894,9 @@ window.DASHBOARD_DATA = {
       "急性一般病床三班護病比資料採健保署「113年12月全民健康保險特約醫院於VPN登錄之各月份三班護病比」，本次實際對應調查檔 395 家醫院。",
       "衛福部醫院評鑑資訊專區的病床設施頁可穩定取得急性一般病床開放數；本次共補入 392 家醫院的現行開床數，其餘仍回退到健保申報床數。",
       "急性一般病床「許可數」尚未找到可穩定串接的院級官方開放資料，因此本版 high case 以『滿載開床』作為上緣，而不是『滿載許可床』。",
-      "原始調查檔仍保留 459 家醫院的總人力、需求線與待招募數，可用來和 bed-based shortage 交叉比對，但兩者口徑並不完全相同。"
+      "原始調查檔仍保留 459 家醫院的總人力、需求線與待招募數，可用來和 bed-based shortage 交叉比對，但兩者口徑並不完全相同。",
+      "離職原因欄位為『人次訊號』且可複選，解讀上適合做驅動因子排序，不適合直接視為單一人員比例。",
+      "調薪題項本次有效回覆 449 家醫院，其中 361 家回報已調薪。"
     ]
   },
   "hospitals": [

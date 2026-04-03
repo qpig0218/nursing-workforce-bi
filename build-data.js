@@ -26,11 +26,40 @@ const OPENINFO_DETAIL_URL = "https://openinfo.mohw.gov.tw/C02/GetPageData";
 const OPENINFO_PAGE_URL = "https://openinfo.mohw.gov.tw/web/C01";
 
 const levelOrder = ["醫學中心", "區域醫院", "地區醫院"];
+const regionOrder = ["臺北", "北區", "中區", "南區", "高屏", "東區"];
 const acuteStandards = {
   醫學中心: { day: 6, evening: 9, night: 11 },
   區域醫院: { day: 7, evening: 11, night: 13 },
   地區醫院: { day: 10, evening: 13, night: 15 },
 };
+
+const turnoverReasons = [
+  { key: "closure", label: "系統歇業人次", theme: "制度性退出", actionable: false },
+  { key: "notValued", label: "不被機構重視", theme: "組織氣候", actionable: true },
+  { key: "workload", label: "無法管理的工作量", theme: "工作設計", actionable: true },
+  { key: "unsafe", label: "沒有安全的工作環境", theme: "健康安全", actionable: true },
+  { key: "schedule", label: "沒有彈性的工作排班", theme: "工作設計", actionable: true },
+  { key: "belonging", label: "沒有所屬感", theme: "組織氣候", actionable: true },
+  { key: "interaction", label: "負向互動", theme: "組織氣候", actionable: true },
+  { key: "participation", label: "沒有工作的參與", theme: "組織氣候", actionable: true },
+  { key: "salary", label: "薪資問題", theme: "薪酬", actionable: true },
+  { key: "workLife", label: "工作-生活的不平衡", theme: "工作設計", actionable: true },
+  { key: "childcare", label: "育嬰托育問題", theme: "家庭生活", actionable: true },
+  { key: "familyCare", label: "家庭照顧問題", theme: "家庭生活", actionable: true },
+  { key: "betterCareer", label: "更好的職業", theme: "職涯拉力", actionable: true },
+  { key: "advancement", label: "沒有進階的潛能", theme: "職涯拉力", actionable: true },
+  { key: "study", label: "進修升學", theme: "職涯拉力", actionable: true },
+  { key: "retirement", label: "退休", theme: "生命週期", actionable: false },
+  { key: "health", label: "健康狀況", theme: "健康安全", actionable: true },
+  { key: "commute", label: "通勤距離", theme: "家庭生活", actionable: true },
+  { key: "other", label: "其他問題", theme: "未分類", actionable: false },
+];
+
+const turnoverScopeDefinitions = [
+  { key: "total", label: "整體離職", prefix: "全年離職人員總人次、" },
+  { key: "under3", label: "三個月內離職", prefix: "全年未滿三個月即離職人員總人次、" },
+  { key: "newGrad", label: "應屆離職", prefix: "全年離職，其中應屆畢業生人次、" },
+];
 
 const scenarioDefinitions = [
   {
@@ -126,6 +155,65 @@ function cleanObject(value) {
     result[key] = cleanObject(entry);
   }
   return result;
+}
+
+function normalizeHeaderTail(value) {
+  return String(value || "")
+    .split("、")
+    .pop()
+    .replace(/"/g, "")
+    .replace(/\s+/g, "")
+    .trim();
+}
+
+function findHeaderByPrefix(headers, prefix, label) {
+  const normalizedLabel = String(label || "")
+    .replace(/"/g, "")
+    .replace(/\s+/g, "")
+    .trim();
+
+  return (
+    headers.find(
+      (header) =>
+        String(header || "").startsWith(prefix) && normalizeHeaderTail(header) === normalizedLabel
+    ) || null
+  );
+}
+
+function readRowNumber(row, header) {
+  return header ? number(row?.[header]) : null;
+}
+
+function readRowText(row, header) {
+  if (!header) return null;
+  const value = row?.[header];
+  if (value === null || value === undefined || value === "") return null;
+  return String(value).trim() || null;
+}
+
+function normalizeYesNo(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const text = String(value).trim();
+  if (!text || text === "NULL") return null;
+  if (text.includes("沒有")) return false;
+  if (text.includes("有")) return true;
+  return null;
+}
+
+function sumShortage(items, getter) {
+  return items.reduce((sum, item) => {
+    const value = number(getter(item));
+    if (value === null) return sum;
+    return sum + Math.max(-value, 0);
+  }, 0);
+}
+
+function sumSurplus(items, getter) {
+  return items.reduce((sum, item) => {
+    const value = number(getter(item));
+    if (value === null) return sum;
+    return sum + Math.max(value, 0);
+  }, 0);
 }
 
 async function fetchJson(url, payload, options = {}) {
@@ -459,16 +547,95 @@ function summarizeScenario(hospitals, key) {
   });
 }
 
+function summarizeTurnoverScope(hospitals, scopeKey) {
+  const reasonSignals = turnoverReasons
+    .map((reason) => ({
+      key: reason.key,
+      label: reason.label.replace(/人次$/, ""),
+      theme: reason.theme,
+      actionable: reason.actionable,
+      value: round(sumValues(hospitals, (hospital) => hospital.turnover?.reasons?.[reason.key]?.[scopeKey]), 1),
+    }))
+    .sort((a, b) => b.value - a.value);
+
+  const actionableReasonSignals = reasonSignals.filter(
+    (reason) => reason.actionable && reason.value > 0
+  );
+
+  const attentionReasons = reasonSignals.filter(
+    (reason) =>
+      !["closure", "retirement", "other"].includes(reason.key) && reason.value > 0
+  );
+
+  const themeAccumulator = actionableReasonSignals.reduce((result, reason) => {
+    result[reason.theme] = numberOrZero(result[reason.theme]) + numberOrZero(reason.value);
+    return result;
+  }, {});
+
+  const actionableThemeTotal = Object.values(themeAccumulator).reduce(
+    (sum, value) => sum + numberOrZero(value),
+    0
+  );
+
+  const themeSignals = Object.entries(themeAccumulator)
+    .map(([theme, value]) => ({
+      theme,
+      value: round(value, 1),
+      share: round(ratio(value, actionableThemeTotal), 4),
+    }))
+    .sort((a, b) => b.value - a.value);
+
+  return cleanObject({
+    scope: scopeKey,
+    actionableThemeTotal: round(actionableThemeTotal, 1),
+    themeSignals,
+    reasonSignals,
+    actionableReasons: actionableReasonSignals.slice(0, 6),
+    attentionReasons: attentionReasons.slice(0, 6),
+  });
+}
+
 async function main() {
   const workbook = XLSX.readFile(workbookPath);
   const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets["114"], { defval: null });
   const gapRows = XLSX.utils.sheet_to_json(workbook.Sheets["人力缺口表"], { defval: null });
+  const rawHeaders = Object.keys(rawRows[0] || {});
+
+  const turnoverReasonHeaders = turnoverReasons.map((reason) => ({
+    ...reason,
+    headers: Object.fromEntries(
+      turnoverScopeDefinitions.map((scope) => [
+        scope.key,
+        findHeaderByPrefix(rawHeaders, scope.prefix, reason.label),
+      ])
+    ),
+  }));
+
+  const turnoverTotalHeaders = {
+    total: findHeaderByPrefix(rawHeaders, "全年離職人員總人次、", "小計"),
+    newGrad: findHeaderByPrefix(rawHeaders, "全年離職，其中應屆畢業生人次、", "小計"),
+    under3: findHeaderByPrefix(rawHeaders, "全年未滿三個月即離職人員總人次、", "小計"),
+    under3Returnee: findHeaderByPrefix(
+      rawHeaders,
+      "全年未滿三個月即離職， 其中回流人員人次、",
+      "小計"
+    ),
+    under3NewGrad: findHeaderByPrefix(
+      rawHeaders,
+      "全年未滿三個月即離職，其中應屆畢業生人次、",
+      "小計"
+    ),
+  };
 
   const rawByCode = new Map(rawRows.map((row) => [String(row["醫事機構代碼"] || ""), row]));
 
   const surveyHospitals = gapRows.map((row) => {
     const code = String(row["醫事機構代碼"] || "");
     const raw = rawByCode.get(code) || {};
+    const salaryRaised = normalizeYesNo(raw["是否調高薪資"]);
+    const salaryRaiseAmount = number(raw["護理人員整體(不分年資)較113年平均每人每月至少約增加金額"]);
+    const shortageGap = number(row["護理人力缺口數"]);
+
     return {
       code,
       name: row["醫院名稱"],
@@ -477,9 +644,59 @@ async function main() {
       city: row["縣市別"],
       current: numberOrZero(row["總護理人力"]),
       need: numberOrZero(row["醫院需要的總護理人力"]),
-      gap: numberOrZero(row["護理人力缺口數"]),
+      gap: numberOrZero(shortageGap),
       gapRate: number(row["空缺率"]),
+      shortage: shortageGap !== null ? round(Math.max(-shortageGap, 0), 1) : 0,
+      surplus: shortageGap !== null ? round(Math.max(shortageGap, 0), 1) : 0,
       vacancies: numberOrZero(raw["總計、待招募人數"]),
+      structure: {
+        fullTime: numberOrZero(raw["總計、全職人員"]),
+        partTime: numberOrZero(raw["總計、兼職人員"]),
+        actualEmployed: numberOrZero(raw["總計、實際聘僱人數"]),
+        averageActive: numberOrZero(raw["總計、平均在職護理人員數"]),
+        rnEmployed: numberOrZero(raw["護理師(含專科護理師)、實際聘僱人數 小計"]),
+        nurseEmployed: numberOrZero(raw["護士、實際聘僱人數 小計"]),
+        midwifeEmployed:
+          numberOrZero(raw["助產師、實際聘僱人數 小計"]) +
+          numberOrZero(raw["助產士、實際聘僱人數 小計"]),
+      },
+      hiring: {
+        total: numberOrZero(raw["全年新進人員總人次、小計"]),
+        returnees: numberOrZero(raw["上述全年新進人員，其中回流人員人次、小計"]),
+        newGraduates: numberOrZero(raw["上述全年新進人員，其中應屆畢業生人次、小計"]),
+      },
+      turnover: {
+        total: numberOrZero(readRowNumber(raw, turnoverTotalHeaders.total)),
+        newGraduates: numberOrZero(readRowNumber(raw, turnoverTotalHeaders.newGrad)),
+        under3Months: numberOrZero(readRowNumber(raw, turnoverTotalHeaders.under3)),
+        under3Returnees: numberOrZero(readRowNumber(raw, turnoverTotalHeaders.under3Returnee)),
+        under3NewGraduates: numberOrZero(readRowNumber(raw, turnoverTotalHeaders.under3NewGrad)),
+        reasons: Object.fromEntries(
+          turnoverReasonHeaders.map((reason) => [
+            reason.key,
+            cleanObject({
+              total: numberOrZero(readRowNumber(raw, reason.headers.total)),
+              under3: numberOrZero(readRowNumber(raw, reason.headers.under3)),
+              newGrad: numberOrZero(readRowNumber(raw, reason.headers.newGrad)),
+            }),
+          ])
+        ),
+        uncodedOtherReasons: [raw["其他問題之離職原因、1"], raw["其他問題之離職原因、2"], raw["其他問題之離職原因、3"]]
+          .map((value) => (value === null || value === undefined ? null : String(value).trim()))
+          .filter(Boolean),
+      },
+      salaryPolicy: {
+        raised: salaryRaised,
+        target: raw["調高薪資對象"] || null,
+        amount: salaryRaiseAmount,
+        units: {
+          acuteWard: readRowText(raw, "一般急性病房"),
+          emergency: readRowText(raw, "急診室"),
+          icu: readRowText(raw, "重症及加護病房"),
+          outpatient: readRowText(raw, "門診"),
+        },
+        other: readRowText(raw, "其它"),
+      },
     };
   });
 
@@ -710,6 +927,345 @@ async function main() {
     survey: surveyTotals,
   });
 
+  const levelWorkforceInsights = levelOrder.map((level) => {
+    const subset = hospitals.filter((hospital) => hospital.level === level);
+    const levelStat = levelStats.find((item) => item.level === level);
+    const actualEmployed = sumValues(subset, (hospital) => hospital.structure?.actualEmployed);
+    const fullTime = sumValues(subset, (hospital) => hospital.structure?.fullTime);
+    const rnEmployed = sumValues(subset, (hospital) => hospital.structure?.rnEmployed);
+    const vacancies = sumValues(subset, (hospital) => hospital.vacancies);
+    const turnoverTotal = sumValues(subset, (hospital) => hospital.turnover?.total);
+    const under3Months = sumValues(subset, (hospital) => hospital.turnover?.under3Months);
+    const hires = sumValues(subset, (hospital) => hospital.hiring?.total);
+
+    const recommendation =
+      level === "區域醫院"
+        ? {
+            title: "先補足可調度的彈性班表",
+            body: "區域醫院同時承接最大 survey 缺口與最大 acute 補班壓力，建議優先配置跨單位支援池與區域招募配額。",
+          }
+        : level === "醫學中心"
+          ? {
+              title: "把高強度夜班與重症單位留任做深",
+              body: "醫學中心量體最大，建議把重症、急診與夜班誘因綁進進階職涯與技術加給，而不是只做一般性補人。",
+            }
+          : {
+              title: "把新進三個月內流失壓下來",
+              body: "地區醫院家數最多且早離職占比最高，建議先從固定 preceptor、前三個月排班保護與區域共享培訓做起。",
+            };
+
+    return cleanObject({
+      level,
+      hospitals: subset.length,
+      structure: {
+        actualEmployed: round(actualEmployed, 1),
+        fullTimeShare: round(ratio(fullTime, actualEmployed), 4),
+        rnShare: round(ratio(rnEmployed, actualEmployed), 4),
+        vacancyBacklog: round(vacancies, 1),
+        vacancyBacklogRate: round(ratio(vacancies, actualEmployed), 4),
+      },
+      survey: {
+        current: round(sumValues(subset, (hospital) => hospital.current), 1),
+        need: round(sumValues(subset, (hospital) => hospital.need), 1),
+        shortage: round(sumValues(subset, (hospital) => hospital.shortage), 1),
+        surplus: round(sumValues(subset, (hospital) => hospital.surplus), 1),
+        fillRate: round(
+          ratio(
+            sumValues(subset, (hospital) => hospital.current),
+            sumValues(subset, (hospital) => hospital.need)
+          ),
+          4
+        ),
+      },
+      bedPressure: {
+        openBeds: levelStat?.acuteOpenBeds ?? null,
+        midShortage: levelStat?.scenarios?.mid?.shortage?.total ?? null,
+        midShortageShare: round(
+          ratio(levelStat?.scenarios?.mid?.shortage?.total, totals.scenarios.mid.shortage.total),
+          4
+        ),
+        openBedDelta: levelStat?.openBedDelta ?? null,
+      },
+      flow: {
+        hires: round(hires, 1),
+        turnover: round(turnoverTotal, 1),
+        hireToTurnover: round(ratio(hires, turnoverTotal), 3),
+        under3Months: round(under3Months, 1),
+        under3Share: round(ratio(under3Months, turnoverTotal), 4),
+      },
+      recommendation,
+    });
+  });
+
+  const regionalGapBase = regionOrder.map((region) => {
+    const subset = hospitals.filter((hospital) => hospital.region === region);
+    const acuteSubset = acuteHospitals.filter((hospital) => hospital.region === region);
+    const levelShortages = levelOrder
+      .map((level) => ({
+        level,
+        shortage: round(
+          sumValues(
+            acuteSubset.filter((hospital) => hospital.level === level),
+            (hospital) => hospital.scenarios?.mid?.shortage?.total
+          ),
+          1
+        ),
+      }))
+      .sort((a, b) => b.shortage - a.shortage);
+
+    const topHospitals = [...acuteSubset]
+      .filter((hospital) => hospital.scenarios?.mid?.shortage?.total > 0)
+      .sort((a, b) => b.scenarios.mid.shortage.total - a.scenarios.mid.shortage.total)
+      .slice(0, 2)
+      .map((hospital) =>
+        cleanObject({
+          name: hospital.name,
+          level: hospital.level,
+          shortage: hospital.scenarios.mid.shortage.total,
+        })
+      );
+
+    const surveyNeed = sumValues(subset, (hospital) => hospital.need);
+    const surveyShortage = sumValues(subset, (hospital) => hospital.shortage);
+    const surveyVacancies = sumValues(subset, (hospital) => hospital.vacancies);
+    const midRequired = sumValues(acuteSubset, (hospital) => hospital.scenarios?.mid?.required?.total);
+    const midShortage = sumValues(acuteSubset, (hospital) => hospital.scenarios?.mid?.shortage?.total);
+    const openBeds = sumValues(
+      acuteSubset,
+      (hospital) => hospital.acuteOpenBeds ?? hospital.acute?.reportedBeds
+    );
+
+    return cleanObject({
+      region,
+      hospitals: subset.length,
+      acuteHospitals: acuteSubset.length,
+      survey: {
+        current: round(sumValues(subset, (hospital) => hospital.current), 1),
+        need: round(surveyNeed, 1),
+        shortage: round(surveyShortage, 1),
+        fillRate: round(
+          ratio(sumValues(subset, (hospital) => hospital.current), surveyNeed),
+          4
+        ),
+      },
+      structure: {
+        vacancyBacklog: round(surveyVacancies, 1),
+        vacancyBacklogRate: round(
+          ratio(
+            surveyVacancies,
+            sumValues(subset, (hospital) => hospital.structure?.actualEmployed)
+          ),
+          4
+        ),
+      },
+      bedPressure: {
+        openBeds: round(openBeds, 1),
+        midRequired: round(midRequired, 1),
+        midShortage: round(midShortage, 1),
+        midShortageRate: round(ratio(midShortage, midRequired), 4),
+        shortagePer100Beds:
+          openBeds > 0 ? round((midShortage / openBeds) * 100, 2) : null,
+      },
+      dominantLevel: levelShortages[0]?.level ?? null,
+      dominantLevelShortage: levelShortages[0]?.shortage ?? null,
+      topHospitals,
+    });
+  });
+
+  const regionalGapMap = regionalGapBase.map((region) => {
+    const absoluteRank =
+      [...regionalGapBase]
+        .sort((a, b) => b.bedPressure.midShortage - a.bedPressure.midShortage)
+        .findIndex((item) => item.region === region.region) + 1;
+    const intensityRank =
+      [...regionalGapBase]
+        .sort((a, b) => b.bedPressure.midShortageRate - a.bedPressure.midShortageRate)
+        .findIndex((item) => item.region === region.region) + 1;
+
+    return cleanObject({
+      ...region,
+      absoluteRank,
+      intensityRank,
+    });
+  });
+
+  const topAbsoluteRegion = [...regionalGapMap].sort(
+    (a, b) => b.bedPressure.midShortage - a.bedPressure.midShortage
+  )[0];
+  const topIntensityRegion = [...regionalGapMap].sort(
+    (a, b) => b.bedPressure.midShortageRate - a.bedPressure.midShortageRate
+  )[0];
+  const lowestFillRegion = [...regionalGapMap].sort(
+    (a, b) => a.survey.fillRate - b.survey.fillRate
+  )[0];
+
+  const regionalFocusCards = [
+    {
+      title: `${topAbsoluteRegion.region} 缺口量最大`,
+      body: `${topAbsoluteRegion.region} 的 acute 中推估缺口 ${Math.round(
+        topAbsoluteRegion.bedPressure.midShortage
+      ).toLocaleString("zh-Hant-TW")} 人，主要壓力集中在 ${topAbsoluteRegion.dominantLevel}。建議把跨院招募與關鍵單位補班優先放在此區。`,
+      accent: "rust",
+    },
+    {
+      title: `${topIntensityRegion.region} 缺口率最高`,
+      body: `${topIntensityRegion.region} 每 100 張急性開床約對應 ${topIntensityRegion.bedPressure.shortagePer100Beds.toLocaleString(
+        "zh-Hant-TW",
+        { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+      )} 名中推估缺口，是六區中最緊的班表壓力帶。`,
+      accent: "ink",
+    },
+    {
+      title: `${lowestFillRegion.region} survey 填補率最低`,
+      body: `${lowestFillRegion.region} 目前 survey fill rate 為 ${Math.round(
+        lowestFillRegion.survey.fillRate * 100
+      )}% ，即使量體較小，也代表補才、住宿與通勤支持要一起進場。`,
+      accent: "teal",
+    },
+  ];
+
+  const salaryResponseHospitals = hospitals.filter(
+    (hospital) => hospital.salaryPolicy?.raised !== null
+  );
+  const salaryRaisedHospitals = salaryResponseHospitals.filter(
+    (hospital) => hospital.salaryPolicy?.raised
+  );
+  const salaryRaiseAmounts = salaryRaisedHospitals
+    .map((hospital) => hospital.salaryPolicy?.amount)
+    .filter((value) => value !== null && value !== undefined);
+
+  const salaryTargetBreakdown = [
+    "「全體」護理人員(含新進人員)",
+    "「部分單位」護理人員(含新進人員)",
+    "「只有新進人員」調薪",
+  ].map((target) => ({
+    target,
+    hospitals: salaryRaisedHospitals.filter((hospital) => hospital.salaryPolicy?.target === target).length,
+  }));
+
+  const turnoverScopes = turnoverScopeDefinitions.map((scope) =>
+    cleanObject({
+      key: scope.key,
+      label: scope.label,
+      ...summarizeTurnoverScope(hospitals, scope.key),
+    })
+  );
+
+  const turnoverInsights = cleanObject({
+    overview: {
+      actualEmployed: round(sumValues(hospitals, (hospital) => hospital.structure?.actualEmployed), 1),
+      fullTimeShare: round(
+        ratio(
+          sumValues(hospitals, (hospital) => hospital.structure?.fullTime),
+          sumValues(hospitals, (hospital) => hospital.structure?.actualEmployed)
+        ),
+        4
+      ),
+      rnShare: round(
+        ratio(
+          sumValues(hospitals, (hospital) => hospital.structure?.rnEmployed),
+          sumValues(hospitals, (hospital) => hospital.structure?.actualEmployed)
+        ),
+        4
+      ),
+      hires: round(sumValues(hospitals, (hospital) => hospital.hiring?.total), 1),
+      returnees: round(sumValues(hospitals, (hospital) => hospital.hiring?.returnees), 1),
+      newGraduatesHired: round(sumValues(hospitals, (hospital) => hospital.hiring?.newGraduates), 1),
+      turnover: round(sumValues(hospitals, (hospital) => hospital.turnover?.total), 1),
+      under3Months: round(sumValues(hospitals, (hospital) => hospital.turnover?.under3Months), 1),
+      under3Share: round(
+        ratio(
+          sumValues(hospitals, (hospital) => hospital.turnover?.under3Months),
+          sumValues(hospitals, (hospital) => hospital.turnover?.total)
+        ),
+        4
+      ),
+      hireToTurnover: round(
+        ratio(
+          sumValues(hospitals, (hospital) => hospital.hiring?.total),
+          sumValues(hospitals, (hospital) => hospital.turnover?.total)
+        ),
+        3
+      ),
+      netRecruitment: round(
+        sumValues(hospitals, (hospital) => hospital.hiring?.total) -
+          sumValues(hospitals, (hospital) => hospital.turnover?.total),
+        1
+      ),
+      salaryRaiseResponseHospitals: salaryResponseHospitals.length,
+      salaryRaisedHospitals: salaryRaisedHospitals.length,
+      salaryRaisedRate: round(
+        ratio(salaryRaisedHospitals.length, salaryResponseHospitals.length),
+        4
+      ),
+      averageRaiseAmount: round(
+        ratio(
+          salaryRaiseAmounts.reduce((sum, value) => sum + value, 0),
+          salaryRaiseAmounts.length
+        ),
+        1
+      ),
+    },
+    structureByLevel: levelWorkforceInsights.map((level) =>
+      cleanObject({
+        level: level.level,
+        actualEmployed: level.structure.actualEmployed,
+        fullTimeShare: level.structure.fullTimeShare,
+        rnShare: level.structure.rnShare,
+        hireToTurnover: level.flow.hireToTurnover,
+        under3Share: level.flow.under3Share,
+      })
+    ),
+    salarySignals: {
+      targetBreakdown: salaryTargetBreakdown,
+      unitTargets: [
+        {
+          label: "一般急性病房",
+          hospitals: salaryRaisedHospitals.filter((hospital) => hospital.salaryPolicy?.units?.acuteWard).length,
+        },
+        {
+          label: "急診室",
+          hospitals: salaryRaisedHospitals.filter((hospital) => hospital.salaryPolicy?.units?.emergency).length,
+        },
+        {
+          label: "重症及加護病房",
+          hospitals: salaryRaisedHospitals.filter((hospital) => hospital.salaryPolicy?.units?.icu).length,
+        },
+        {
+          label: "門診",
+          hospitals: salaryRaisedHospitals.filter((hospital) => hospital.salaryPolicy?.units?.outpatient).length,
+        },
+      ],
+    },
+    scopes: turnoverScopes,
+    recommendationCards: [
+      {
+        title: "先處理新進三個月內的工作設計",
+        body: `全年 ${Math.round(
+          sumValues(hospitals, (hospital) => hospital.turnover?.under3Months)
+        ).toLocaleString("zh-Hant-TW")} 人次落在三個月內離職，且可介入原因以工作量、排班彈性與 work-life 為主，建議先改前三個月排班與支援配置。`,
+        accent: "rust",
+      },
+      {
+        title: "整體留任要用職涯路徑對抗外部拉力",
+        body: "排除歇業與退休後，整體離職訊號仍以「更好的職業」最強，表示單靠補招不夠，還需要進階職涯、專長培育與晉升設計。",
+        accent: "ink",
+      },
+      {
+        title: "調薪已經普遍，但不能只靠加薪",
+        body: `${salaryRaisedHospitals.length.toLocaleString(
+          "zh-Hant-TW"
+        )} 家醫院回報已調薪，平均每月增加約 ${Math.round(
+          ratio(
+            salaryRaiseAmounts.reduce((sum, value) => sum + value, 0),
+            salaryRaiseAmounts.length
+          )
+        ).toLocaleString("zh-Hant-TW")} 元；但薪資並不是最強的可介入驅動，代表薪酬必須和班表、職涯與支持系統一起搭配。`,
+        accent: "teal",
+      },
+    ],
+  });
+
   const topMidShortageHospitals = [...acuteHospitals]
     .filter((hospital) => hospital.scenarios.mid?.shortage?.total > 0)
     .sort((a, b) => b.scenarios.mid.shortage.total - a.scenarios.mid.shortage.total)
@@ -794,6 +1350,8 @@ async function main() {
       `衛福部醫院評鑑資訊專區的病床設施頁可穩定取得急性一般病床開放數；本次共補入 ${openInfoMatchedHospitals.length} 家醫院的現行開床數，其餘仍回退到健保申報床數。`,
       "急性一般病床「許可數」尚未找到可穩定串接的院級官方開放資料，因此本版 high case 以『滿載開床』作為上緣，而不是『滿載許可床』。",
       `原始調查檔仍保留 459 家醫院的總人力、需求線與待招募數，可用來和 bed-based shortage 交叉比對，但兩者口徑並不完全相同。`,
+      "離職原因欄位為『人次訊號』且可複選，解讀上適合做驅動因子排序，不適合直接視為單一人員比例。",
+      `調薪題項本次有效回覆 ${salaryResponseHospitals.length} 家醫院，其中 ${salaryRaisedHospitals.length} 家回報已調薪。`,
     ],
   });
 
@@ -826,7 +1384,11 @@ async function main() {
     },
     totals,
     levelStats,
+    levelWorkforceInsights,
     scenarios: scenarioSummaries,
+    regionalGapMap,
+    regionalFocusCards,
+    turnoverInsights,
     topMidShortageHospitals,
     topOpenPressureHospitals,
     strategyCards,

@@ -86,6 +86,9 @@ renderScenarioScale();
 renderScenarioCards();
 renderOpenProxy();
 renderStrategyCards();
+renderLevelWorkforceInsights();
+renderRegionalGapMap();
+renderTurnoverInsights();
 renderTables();
 renderFooter();
 
@@ -299,7 +302,288 @@ function renderOpenProxy() {
 
 function renderStrategyCards() {
   const container = document.getElementById("strategy-cards");
-  container.innerHTML = data.strategyCards
+  container.innerHTML = renderStrategyGroup(data.strategyCards);
+}
+
+function renderLevelWorkforceInsights() {
+  const cards = document.getElementById("tier-cards");
+  const bridge = document.getElementById("tier-bridge");
+  const maxSurveyShortage = Math.max(...data.levelWorkforceInsights.map((item) => item.survey.shortage));
+  const maxBedShortage = Math.max(
+    ...data.levelWorkforceInsights.map((item) => item.bedPressure.midShortage)
+  );
+
+  cards.innerHTML = data.levelWorkforceInsights
+    .map(
+      (item) => `
+        <article class="panel tier-card">
+          <div class="tier-card__head">
+            <div>
+              <p class="eyebrow">Tier Workforce</p>
+              <h3>${item.level}</h3>
+            </div>
+            <div class="level-card__tag">
+              <span>acute 缺口占比</span>
+              <strong>${formatPercent(item.bedPressure.midShortageShare)}</strong>
+            </div>
+          </div>
+
+          <div class="tier-card__stats">
+            ${statCell("實際聘僱", formatMetric(item.structure.actualEmployed))}
+            ${statCell("1-4 fill", formatPercent(item.survey.fillRate))}
+            ${statCell("待招募 backlog", formatMetric(item.structure.vacancyBacklog))}
+            ${statCell("acute 中推估", formatMetric(item.bedPressure.midShortage, 1))}
+          </div>
+
+          <div class="tier-card__bars">
+            <div class="tier-card__bar">
+              <div class="tier-card__meta">
+                <span>1-4 shortage</span>
+                <strong>${formatMetric(item.survey.shortage)}</strong>
+              </div>
+              <div class="tier-card__track">
+                <div class="tier-card__fill tier-card__fill--survey" style="width:${Math.max(
+                  (item.survey.shortage / maxSurveyShortage) * 100,
+                  4
+                )}%"></div>
+              </div>
+            </div>
+            <div class="tier-card__bar">
+              <div class="tier-card__meta">
+                <span>acute 補班壓力</span>
+                <strong>${formatMetric(item.bedPressure.midShortage, 1)}</strong>
+              </div>
+              <div class="tier-card__track">
+                <div class="tier-card__fill tier-card__fill--acute" style="width:${Math.max(
+                  (item.bedPressure.midShortage / maxBedShortage) * 100,
+                  4
+                )}%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tier-card__signals">
+            ${tierSignal("專任占比", formatPercent(item.structure.fullTimeShare))}
+            ${tierSignal("護理師占比", formatPercent(item.structure.rnShare))}
+            ${tierSignal("補補相抵", `${formatMetric(item.flow.hireToTurnover, 2)}x`)}
+            ${tierSignal("三月內離職", formatPercent(item.flow.under3Share))}
+          </div>
+
+          <div class="tier-card__advice">
+            <b>${item.recommendation.title}</b>
+            <p>${item.recommendation.body}</p>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  bridge.innerHTML = data.levelWorkforceInsights
+    .map(
+      (item) => `
+        <article class="tier-bridge__row">
+          <div class="tier-bridge__head">
+            <strong>${item.level}</strong>
+            <span>${formatMetric(item.structure.actualEmployed)} 實際聘僱 / ${formatMetric(
+              item.structure.vacancyBacklog
+            )} 待招募</span>
+          </div>
+          <div class="tier-bridge__stack">
+            <div class="tier-bridge__bar">
+              <span>1-4 shortage</span>
+              <div class="tier-bridge__track">
+                <div class="tier-bridge__fill tier-bridge__fill--survey" style="width:${Math.max(
+                  (item.survey.shortage / maxSurveyShortage) * 100,
+                  4
+                )}%"></div>
+              </div>
+              <strong>${formatMetric(item.survey.shortage)}</strong>
+            </div>
+            <div class="tier-bridge__bar">
+              <span>acute 中推估</span>
+              <div class="tier-bridge__track">
+                <div class="tier-bridge__fill tier-bridge__fill--acute" style="width:${Math.max(
+                  (item.bedPressure.midShortage / maxBedShortage) * 100,
+                  4
+                )}%"></div>
+              </div>
+              <strong>${formatMetric(item.bedPressure.midShortage, 1)}</strong>
+            </div>
+          </div>
+          <div class="tier-bridge__foot">
+            <span>補補相抵 ${formatMetric(item.flow.hireToTurnover, 2)}x</span>
+            <span>三月內離職 ${formatPercent(item.flow.under3Share)}</span>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderRegionalGapMap() {
+  const container = document.getElementById("region-map");
+  const maxRate = Math.max(...data.regionalGapMap.map((item) => item.bedPressure.midShortageRate));
+
+  container.innerHTML = data.regionalGapMap
+    .map((region) => {
+      const intensity = 0.12 + (region.bedPressure.midShortageRate / maxRate) * 0.78;
+      const leadHospital = region.topHospitals[0];
+      return `
+        <article class="region-card region-card--${regionSlug(
+          region.region
+        )}" style="--region-strength:${intensity.toFixed(3)}">
+          <div class="region-card__head">
+            <div>
+              <span class="eyebrow">${region.region}</span>
+              <h3>${region.region}</h3>
+            </div>
+            <div class="region-card__rank">
+              <span>缺口率排名</span>
+              <strong>#${region.intensityRank}</strong>
+            </div>
+          </div>
+          <div class="region-card__value">${formatMetric(region.bedPressure.midShortage, 1)}</div>
+          <p class="region-card__label">acute 中推估缺口</p>
+          <div class="region-card__meta">
+            ${regionMeta("缺口率", formatPercent(region.bedPressure.midShortageRate))}
+            ${regionMeta("Survey fill", formatPercent(region.survey.fillRate))}
+            ${regionMeta("待招募 backlog", formatMetric(region.structure.vacancyBacklog))}
+            ${regionMeta("主力層級", region.dominantLevel)}
+          </div>
+          <div class="region-card__foot">
+            <span>每 100 床缺 ${formatMetric(region.bedPressure.shortagePer100Beds, 2)} 人</span>
+            <span>${leadHospital ? `關注：${leadHospital.name}` : "目前未顯示單點醫院"}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  document.getElementById("regional-focus").innerHTML = renderStrategyGroup(data.regionalFocusCards);
+}
+
+function renderTurnoverInsights() {
+  const overview = data.turnoverInsights.overview;
+  const turnoverKpis = document.getElementById("turnover-kpis");
+  const structureLevelGrid = document.getElementById("structure-level-grid");
+  const driverScopes = document.getElementById("driver-scopes");
+  const maxThemeValue = Math.max(
+    ...data.turnoverInsights.scopes.flatMap((scope) => scope.themeSignals.map((theme) => theme.value))
+  );
+
+  turnoverKpis.innerHTML = [
+    {
+      label: "實際聘僱量體",
+      value: formatMetric(overview.actualEmployed),
+      meta: `專任占比 ${formatPercent(overview.fullTimeShare)} / 護理師占比 ${formatPercent(
+        overview.rnShare
+      )}`,
+    },
+    {
+      label: "新進 / 離職",
+      value: `${formatMetric(overview.hireToTurnover, 2)}x`,
+      meta: `全年新進 ${formatMetric(overview.hires)} / 離職 ${formatMetric(overview.turnover)}`,
+    },
+    {
+      label: "三月內離職",
+      value: formatMetric(overview.under3Months),
+      meta: `占全年離職 ${formatPercent(overview.under3Share)}`,
+    },
+    {
+      label: "調薪覆蓋",
+      value: formatPercent(overview.salaryRaisedRate),
+      meta: `${formatMetric(overview.salaryRaisedHospitals)} / ${formatMetric(
+        overview.salaryRaiseResponseHospitals
+      )} 家回覆已調薪`,
+    },
+  ]
+    .map(
+      (item) => `
+        <article class="turnover-kpi">
+          <span class="kpi__label">${item.label}</span>
+          <strong class="kpi__value turnover-kpi__value">${item.value}</strong>
+          <span class="kpi__meta">${item.meta}</span>
+        </article>
+      `
+    )
+    .join("");
+
+  structureLevelGrid.innerHTML = data.turnoverInsights.structureByLevel
+    .map(
+      (item) => `
+        <article class="structure-card">
+          <div class="structure-card__head">
+            <h4>${item.level}</h4>
+            <span>${formatMetric(item.actualEmployed)} 人</span>
+          </div>
+          <div class="structure-card__grid">
+            ${regionMeta("專任占比", formatPercent(item.fullTimeShare))}
+            ${regionMeta("護理師占比", formatPercent(item.rnShare))}
+            ${regionMeta("補補相抵", `${formatMetric(item.hireToTurnover, 2)}x`)}
+            ${regionMeta("三月內離職", formatPercent(item.under3Share))}
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  driverScopes.innerHTML = data.turnoverInsights.scopes
+    .map(
+      (scope) => `
+        <article class="driver-card">
+          <div class="driver-card__head">
+            <div>
+              <p class="eyebrow">Driver Scope</p>
+              <h3>${scope.label}</h3>
+            </div>
+            <span>可介入訊號 ${formatMetric(scope.actionableThemeTotal)}</span>
+          </div>
+          <div class="driver-card__themes">
+            ${scope.themeSignals
+              .slice(0, 4)
+              .map(
+                (theme) => `
+                  <div class="driver-theme">
+                    <div class="driver-theme__meta">
+                      <span>${theme.theme}</span>
+                      <strong>${formatMetric(theme.value)}</strong>
+                    </div>
+                    <div class="driver-theme__track">
+                      <div class="driver-theme__fill" style="width:${Math.max(
+                        (theme.value / maxThemeValue) * 100,
+                        6
+                      )}%"></div>
+                    </div>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+          <div class="driver-card__reasons">
+            ${scope.attentionReasons
+              .slice(0, 4)
+              .map(
+                (reason) => `
+                  <div class="driver-reason">
+                    <b>${reason.label}</b>
+                    <strong>${formatMetric(reason.value)}</strong>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  document.getElementById("retention-cards").innerHTML = renderStrategyGroup(
+    data.turnoverInsights.recommendationCards
+  );
+}
+
+function renderStrategyGroup(cards) {
+  return cards
     .map(
       (card) => `
         <article class="strategy-card strategy-card--${card.accent}">
@@ -353,9 +637,9 @@ function renderFooter() {
   document.getElementById("quality-notes").innerHTML = `
     <ul class="quality-notes">
       ${data.dataQuality.notes.map((note) => `<li>${note}</li>`).join("")}
-      <li>調查檔總人力口徑：現有人力 ${formatNumber(
+      <li>調查檔口徑拆分：表 1-4 現有人力 ${formatNumber(
         data.totals.survey.current
-      )}、需求線 ${formatNumber(data.totals.survey.need)}、待招募 ${formatNumber(
+      )}、需求線 ${formatNumber(data.totals.survey.need)}；表 1-1 待招募 ${formatNumber(
         data.totals.survey.vacancies
       )}。</li>
       <li>本頁生成時間：${new Date(data.meta.generatedAt).toLocaleString("zh-Hant-TW", {
@@ -399,6 +683,24 @@ function proxyItem(label, value) {
   `;
 }
 
+function tierSignal(label, value) {
+  return `
+    <div class="tier-signal">
+      <span>${label}</span>
+      <strong>${value}</strong>
+    </div>
+  `;
+}
+
+function regionMeta(label, value) {
+  return `
+    <div class="region-meta">
+      <span>${label}</span>
+      <strong>${value}</strong>
+    </div>
+  `;
+}
+
 function formatNumber(value) {
   return Number(value).toLocaleString("zh-Hant-TW");
 }
@@ -435,4 +737,17 @@ function formatSigned(value, digits = 0, suffix = "") {
 function ratioText(actual, standard) {
   if (actual === null || actual === undefined) return `標準 1:${standard}`;
   return `1:${Number(actual).toFixed(1)} / 標準 1:${standard}`;
+}
+
+function regionSlug(region) {
+  return (
+    {
+      臺北: "taipei",
+      北區: "north",
+      中區: "central",
+      南區: "south",
+      高屏: "kaoping",
+      東區: "east",
+    }[region] || "default"
+  );
 }

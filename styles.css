@@ -13,7 +13,7 @@
   --display: "Noto Serif TC", serif;
   --body: "Noto Sans TC", sans-serif;
   --accent: "Syne", sans-serif;
-  --numeric: "Bodoni Moda", "Noto Serif TC", serif;
+  --numeric: "IBM Plex Sans", "Noto Sans TC", sans-serif;
 }
 
 * {
@@ -169,9 +169,10 @@ body::before {
   display: block;
   font-family: var(--numeric);
   font-size: clamp(2.05rem, 3.5vw, 3.35rem);
+  font-weight: 600;
   line-height: 1.06;
-  letter-spacing: -0.04em;
-  font-variant-numeric: lining-nums;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .kpi__meta {
@@ -208,7 +209,7 @@ body::before {
   font-family: var(--numeric);
   font-size: 1.36rem;
   line-height: 1.24;
-  font-variant-numeric: lining-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .ribbon__cell--warn {
@@ -231,6 +232,7 @@ body::before {
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums lining-nums;
   color: var(--muted);
 }
 
@@ -293,7 +295,7 @@ body::before {
   font-family: var(--numeric);
   font-size: 1.08rem;
   line-height: 1.1;
-  font-variant-numeric: lining-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .level-card__headline,
@@ -328,7 +330,7 @@ body::before {
   font-size: 1.34rem;
   line-height: 1.5;
   font-family: var(--numeric);
-  font-variant-numeric: lining-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .meter {
@@ -522,8 +524,8 @@ body::before {
   font-family: var(--numeric);
   font-size: 1.86rem;
   line-height: 1.08;
-  letter-spacing: -0.03em;
-  font-variant-numeric: lining-nums;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .scenario-layout {
@@ -580,8 +582,8 @@ body::before {
   font-family: var(--numeric);
   font-size: 1.82rem;
   line-height: 1.08;
-  letter-spacing: -0.03em;
-  font-variant-numeric: lining-nums;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .range-bar__track {
@@ -627,7 +629,7 @@ body::before {
   font-family: var(--numeric);
   font-size: 1.12rem;
   color: var(--ink);
-  font-variant-numeric: lining-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .scenario-cards {
@@ -741,7 +743,7 @@ body::before {
   font-size: 1.14rem;
   line-height: 1.28;
   color: var(--ink);
-  font-variant-numeric: lining-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .proxy-card__group--ratios .proxy-card__item strong {
@@ -926,6 +928,7 @@ body::before {
   font-size: 1.08rem;
   line-height: 1.2;
   color: var(--ink);
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .tier-card__advice {
@@ -1000,8 +1003,10 @@ body::before {
   margin-top: 18px;
   font-family: var(--numeric);
   font-size: 2.3rem;
+  font-weight: 600;
   line-height: 1.05;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .region-card__label {

@@ -867,6 +867,26 @@ body::before {
   background: rgba(255, 255, 255, 0.52);
 }
 
+.unavailable-state {
+  padding: 24px 26px;
+  border-radius: 22px;
+  border: 1px dashed rgba(18, 16, 15, 0.14);
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.unavailable-state h4 {
+  margin: 0 0 10px;
+  font-family: var(--display);
+  font-size: 1.34rem;
+  line-height: 1.24;
+}
+
+.unavailable-state p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.82;
+}
+
 .tier-signal span,
 .region-meta span,
 .tier-card__meta span,

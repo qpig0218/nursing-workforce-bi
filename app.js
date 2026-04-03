@@ -1,4 +1,4 @@
-const data = window.DASHBOARD_DATA;
+const data = normalizeDashboardData(window.DASHBOARD_DATA || {});
 
 const lowScenario = data.totals.scenarios.low;
 const midScenario = data.totals.scenarios.mid;
@@ -80,17 +80,17 @@ document.getElementById(
 document.getElementById("data-warning").textContent =
   "急性一般病床許可數仍缺院級官方開放資料，本版先完成 open-bed-based 推估。";
 
-renderLevelCards();
-renderGapOverview();
-renderScenarioScale();
-renderScenarioCards();
-renderOpenProxy();
-renderStrategyCards();
-renderLevelWorkforceInsights();
-renderRegionalGapMap();
-renderTurnoverInsights();
-renderTables();
-renderFooter();
+safeRender(renderLevelCards, "level cards");
+safeRender(renderGapOverview, "gap overview");
+safeRender(renderScenarioScale, "scenario scale");
+safeRender(renderScenarioCards, "scenario cards");
+safeRender(renderOpenProxy, "open proxy");
+safeRender(renderStrategyCards, "strategy cards");
+safeRender(renderLevelWorkforceInsights, "level workforce insights");
+safeRender(renderRegionalGapMap, "regional gap map");
+safeRender(renderTurnoverInsights, "turnover insights");
+safeRender(renderTables, "tables");
+safeRender(renderFooter, "footer");
 
 function renderLevelCards() {
   const container = document.getElementById("level-cards");
@@ -308,6 +308,19 @@ function renderStrategyCards() {
 function renderLevelWorkforceInsights() {
   const cards = document.getElementById("tier-cards");
   const bridge = document.getElementById("tier-bridge");
+  if (!data.levelWorkforceInsights?.length) {
+    renderUnavailableState(
+      cards,
+      "目前缺少可用的層級分析資料",
+      "這一段需要新版 data.js。重新整理頁面後若仍無內容，再重新部署靜態資產。"
+    );
+    renderUnavailableState(
+      bridge,
+      "目前缺少交會分析資料",
+      "已改成不會因為資料版本不一致而整段失效。"
+    );
+    return;
+  }
   const maxSurveyShortage = Math.max(...data.levelWorkforceInsights.map((item) => item.survey.shortage));
   const maxBedShortage = Math.max(
     ...data.levelWorkforceInsights.map((item) => item.bedPressure.midShortage)
@@ -422,6 +435,17 @@ function renderLevelWorkforceInsights() {
 
 function renderRegionalGapMap() {
   const container = document.getElementById("region-map");
+  if (!data.regionalGapMap?.length) {
+    renderUnavailableState(
+      container,
+      "目前缺少區域分析資料",
+      "這段會在新版 data.js 載入後自動恢復；現在先避免整個區塊空白。"
+    );
+    document.getElementById("regional-focus").innerHTML = renderStrategyGroup(
+      data.regionalFocusCards || []
+    );
+    return;
+  }
   const maxRate = Math.max(...data.regionalGapMap.map((item) => item.bedPressure.midShortageRate));
 
   container.innerHTML = data.regionalGapMap
@@ -463,6 +487,25 @@ function renderRegionalGapMap() {
 }
 
 function renderTurnoverInsights() {
+  if (!data.turnoverInsights?.overview || !data.turnoverInsights?.scopes?.length) {
+    renderUnavailableState(
+      document.getElementById("turnover-kpis"),
+      "目前缺少離職驅動資料",
+      "如果頁面剛更新，這通常是瀏覽器快取的舊 data.js 與新 app.js 混用造成；重新整理後即可恢復。"
+    );
+    renderUnavailableState(
+      document.getElementById("structure-level-grid"),
+      "暫時無法顯示結構量體",
+      "新版資料已加入結構與離職欄位，載入一致版本後會正常顯示。"
+    );
+    renderUnavailableState(
+      document.getElementById("driver-scopes"),
+      "暫時無法顯示驅動因子排序",
+      "前端已修正為不再因資料不一致而把整段畫面中斷。"
+    );
+    document.getElementById("retention-cards").innerHTML = "";
+    return;
+  }
   const overview = data.turnoverInsights.overview;
   const turnoverKpis = document.getElementById("turnover-kpis");
   const structureLevelGrid = document.getElementById("structure-level-grid");
@@ -583,7 +626,7 @@ function renderTurnoverInsights() {
 }
 
 function renderStrategyGroup(cards) {
-  return cards
+  return (cards || [])
     .map(
       (card) => `
         <article class="strategy-card strategy-card--${card.accent}">
@@ -699,6 +742,245 @@ function regionMeta(label, value) {
       <strong>${value}</strong>
     </div>
   `;
+}
+
+function renderUnavailableState(container, title, body) {
+  if (!container) return;
+  container.innerHTML = `
+    <article class="unavailable-state">
+      <h4>${title}</h4>
+      <p>${body}</p>
+    </article>
+  `;
+}
+
+function safeRender(fn, label) {
+  try {
+    fn();
+  } catch (error) {
+    console.error(`[render:${label}]`, error);
+  }
+}
+
+function normalizeDashboardData(source) {
+  const normalized = source || {};
+  normalized.levelWorkforceInsights =
+    normalized.levelWorkforceInsights || deriveLevelWorkforceInsights(normalized);
+  normalized.regionalGapMap = normalized.regionalGapMap || deriveRegionalGapMap(normalized);
+  normalized.regionalFocusCards =
+    normalized.regionalFocusCards || deriveRegionalFocusCards(normalized.regionalGapMap);
+  return normalized;
+}
+
+function deriveLevelWorkforceInsights(source) {
+  if (!source.levelStats?.length) return [];
+
+  return source.levelStats.map((level) => {
+    const subset = (source.hospitals || []).filter((hospital) => hospital.level === level.level);
+    const surveyCurrent = sumBy(subset, (hospital) => hospital.survey?.current);
+    const surveyNeed = sumBy(subset, (hospital) => hospital.survey?.need);
+    const surveyShortage = sumShortageBy(subset, (hospital) => hospital.survey?.gap);
+    const surveySurplus = sumSurplusBy(subset, (hospital) => hospital.survey?.gap);
+    const vacancyBacklog = sumBy(subset, (hospital) => hospital.survey?.vacancies);
+    const acuteMidShortage = level.scenarios?.mid?.shortage?.total ?? null;
+    const acuteMidTotal = source.totals?.scenarios?.mid?.shortage?.total ?? null;
+    const recommendation =
+      level.level === "區域醫院"
+        ? {
+            title: "先守住區域醫院的補班彈性",
+            body: "區域醫院通常同時承接轉診與夜班壓力，先補足可跨單位調度的人力池，會比平均補人更有效。",
+          }
+        : level.level === "醫學中心"
+          ? {
+              title: "把高強度單位留任做深",
+              body: "醫學中心量體大、重症密度高，建議把夜班、急診、重症與進階職涯綁成同一套留任組合。",
+            }
+          : {
+              title: "降低早期流失比擴大招募更急",
+              body: "地區醫院家數最多，若前三個月留不住，新進補進來也會快速流失。",
+            };
+
+    return {
+      level: level.level,
+      hospitals: subset.length || level.hospitals || 0,
+      structure: {
+        actualEmployed: surveyCurrent || null,
+        fullTimeShare: null,
+        rnShare: null,
+        vacancyBacklog: vacancyBacklog || null,
+        vacancyBacklogRate: surveyCurrent ? vacancyBacklog / surveyCurrent : null,
+      },
+      survey: {
+        current: surveyCurrent || null,
+        need: surveyNeed || null,
+        shortage: surveyShortage || 0,
+        surplus: surveySurplus || 0,
+        fillRate: surveyNeed ? surveyCurrent / surveyNeed : null,
+      },
+      bedPressure: {
+        openBeds: level.acuteOpenBeds ?? null,
+        midShortage: acuteMidShortage,
+        midShortageShare: acuteMidTotal ? acuteMidShortage / acuteMidTotal : null,
+        openBedDelta: level.openBedDelta ?? null,
+      },
+      flow: {
+        hires: null,
+        turnover: null,
+        hireToTurnover: null,
+        under3Months: null,
+        under3Share: null,
+      },
+      recommendation,
+    };
+  });
+}
+
+function deriveRegionalGapMap(source) {
+  if (!source.hospitals?.length) return [];
+
+  const regions = ["臺北", "北區", "中區", "南區", "高屏", "東區"].filter((region) =>
+    source.hospitals.some((hospital) => hospital.region === region)
+  );
+
+  const mapped = regions.map((region) => {
+    const subset = source.hospitals.filter((hospital) => hospital.region === region);
+    const acuteSubset = subset.filter((hospital) => hospital.scenarios?.mid);
+    const surveyCurrent = sumBy(subset, (hospital) => hospital.survey?.current);
+    const surveyNeed = sumBy(subset, (hospital) => hospital.survey?.need);
+    const surveyShortage = sumShortageBy(subset, (hospital) => hospital.survey?.gap);
+    const vacancyBacklog = sumBy(subset, (hospital) => hospital.survey?.vacancies);
+    const midRequired = sumBy(acuteSubset, (hospital) => hospital.scenarios?.mid?.required?.total);
+    const midShortage = sumBy(acuteSubset, (hospital) => hospital.scenarios?.mid?.shortage?.total);
+    const openBeds = sumBy(
+      acuteSubset,
+      (hospital) => hospital.acuteOpenBeds ?? hospital.acute?.reportedBeds
+    );
+
+    const dominantLevel =
+      ["醫學中心", "區域醫院", "地區醫院"]
+        .map((level) => ({
+          level,
+          shortage: sumBy(
+            acuteSubset.filter((hospital) => hospital.level === level),
+            (hospital) => hospital.scenarios?.mid?.shortage?.total
+          ),
+        }))
+        .sort((a, b) => b.shortage - a.shortage)[0] || null;
+
+    return {
+      region,
+      hospitals: subset.length,
+      acuteHospitals: acuteSubset.length,
+      survey: {
+        current: surveyCurrent || null,
+        need: surveyNeed || null,
+        shortage: surveyShortage || 0,
+        fillRate: surveyNeed ? surveyCurrent / surveyNeed : null,
+      },
+      structure: {
+        vacancyBacklog: vacancyBacklog || null,
+        vacancyBacklogRate: surveyCurrent ? vacancyBacklog / surveyCurrent : null,
+      },
+      bedPressure: {
+        openBeds: openBeds || null,
+        midRequired: midRequired || null,
+        midShortage: midShortage || 0,
+        midShortageRate: midRequired ? midShortage / midRequired : null,
+        shortagePer100Beds: openBeds ? (midShortage / openBeds) * 100 : null,
+      },
+      dominantLevel: dominantLevel?.level || null,
+      dominantLevelShortage: dominantLevel?.shortage || null,
+      topHospitals: [...acuteSubset]
+        .filter((hospital) => positiveNumber(hospital.scenarios?.mid?.shortage?.total) > 0)
+        .sort(
+          (a, b) =>
+            positiveNumber(b.scenarios?.mid?.shortage?.total) -
+            positiveNumber(a.scenarios?.mid?.shortage?.total)
+        )
+        .slice(0, 2)
+        .map((hospital) => ({
+          name: hospital.name,
+          level: hospital.level,
+          shortage: hospital.scenarios?.mid?.shortage?.total ?? null,
+        })),
+    };
+  });
+
+  return mapped.map((region) => ({
+    ...region,
+    absoluteRank:
+      [...mapped]
+        .sort(
+          (a, b) =>
+            positiveNumber(b.bedPressure.midShortage) - positiveNumber(a.bedPressure.midShortage)
+        )
+        .findIndex((item) => item.region === region.region) + 1,
+    intensityRank:
+      [...mapped]
+        .sort(
+          (a, b) =>
+            positiveNumber(b.bedPressure.midShortageRate) -
+            positiveNumber(a.bedPressure.midShortageRate)
+        )
+        .findIndex((item) => item.region === region.region) + 1,
+  }));
+}
+
+function deriveRegionalFocusCards(regionalGapMap) {
+  if (!regionalGapMap?.length) return [];
+  const topAbsoluteRegion = [...regionalGapMap].sort(
+    (a, b) => positiveNumber(b.bedPressure.midShortage) - positiveNumber(a.bedPressure.midShortage)
+  )[0];
+  const topIntensityRegion = [...regionalGapMap].sort(
+    (a, b) =>
+      positiveNumber(b.bedPressure.midShortageRate) - positiveNumber(a.bedPressure.midShortageRate)
+  )[0];
+  const lowestFillRegion = [...regionalGapMap].sort(
+    (a, b) => positiveNumber(a.survey.fillRate) - positiveNumber(b.survey.fillRate)
+  )[0];
+
+  return [
+    {
+      title: `${topAbsoluteRegion.region} 缺口量最大`,
+      body: `${topAbsoluteRegion.region} 的 acute 中推估缺口最高，優先順序應放在區域內關鍵醫院與主力承壓層級。`,
+      accent: "rust",
+    },
+    {
+      title: `${topIntensityRegion.region} 缺口率最深`,
+      body: `${topIntensityRegion.region} 的每床補班壓力最高，代表不是只有量大，而是班表緊度已經偏高。`,
+      accent: "ink",
+    },
+    {
+      title: `${lowestFillRegion.region} survey 填補率最低`,
+      body: `${lowestFillRegion.region} 在 survey 口徑上的填補率最低，補人策略要和通勤、住宿或區域條件一起思考。`,
+      accent: "teal",
+    },
+  ];
+}
+
+function sumBy(items, getter) {
+  return (items || []).reduce((sum, item) => sum + positiveNumber(getter(item)), 0);
+}
+
+function sumShortageBy(items, getter) {
+  return (items || []).reduce((sum, item) => {
+    const value = Number(getter(item));
+    if (!Number.isFinite(value) || value >= 0) return sum;
+    return sum + Math.abs(value);
+  }, 0);
+}
+
+function sumSurplusBy(items, getter) {
+  return (items || []).reduce((sum, item) => {
+    const value = Number(getter(item));
+    if (!Number.isFinite(value) || value <= 0) return sum;
+    return sum + value;
+  }, 0);
+}
+
+function positiveNumber(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
 }
 
 function formatNumber(value) {

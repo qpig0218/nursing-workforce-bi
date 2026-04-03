@@ -280,12 +280,16 @@ function renderOpenProxy() {
           <div class="proxy-card__value">${formatMetric(level.acuteOpenBeds)}</div>
           <span class="proxy-card__sub">現行開放急性一般病床</span>
           <div class="proxy-card__meta">
-            <span><b>健保申報床數</b><strong>${formatMetric(level.acuteReportedBeds)}</strong></span>
-            <span><b>開床差</b><strong>${formatSigned(level.openBedDelta, 1, " 床")}</strong></span>
-            <span><b>急性班表人力</b><strong>${formatMetric(level.current.total, 1)}</strong></span>
-            <span><b>白班實況</b><strong>${ratioText(level.actualRatio.day, level.standard.day)}</strong></span>
-            <span><b>小夜實況</b><strong>${ratioText(level.actualRatio.evening, level.standard.evening)}</strong></span>
-            <span><b>大夜實況</b><strong>${ratioText(level.actualRatio.night, level.standard.night)}</strong></span>
+            <div class="proxy-card__group">
+              ${proxyItem("健保申報床數", formatMetric(level.acuteReportedBeds))}
+              ${proxyItem("開床差", formatSigned(level.openBedDelta, 1, " 床"))}
+              ${proxyItem("急性班表人力", formatMetric(level.current.total, 1))}
+            </div>
+            <div class="proxy-card__group proxy-card__group--ratios">
+              ${proxyItem("白班實況", ratioText(level.actualRatio.day, level.standard.day))}
+              ${proxyItem("小夜實況", ratioText(level.actualRatio.evening, level.standard.evening))}
+              ${proxyItem("大夜實況", ratioText(level.actualRatio.night, level.standard.night))}
+            </div>
           </div>
         </article>
       `
@@ -381,6 +385,15 @@ function footCell(label, value) {
   return `
     <div class="micro-stat">
       <span>${label}</span>
+      <strong>${value}</strong>
+    </div>
+  `;
+}
+
+function proxyItem(label, value) {
+  return `
+    <div class="proxy-card__item">
+      <b>${label}</b>
       <strong>${value}</strong>
     </div>
   `;

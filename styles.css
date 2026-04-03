@@ -396,20 +396,26 @@ body::before {
 
 .gap-overview {
   display: grid;
-  gap: 22px;
+  gap: 30px;
 }
 
 .gap-group {
   display: grid;
   grid-template-columns: 144px minmax(0, 1fr);
-  gap: 22px;
+  gap: 26px;
   align-items: start;
+  padding: 12px 0 16px;
+}
+
+.gap-group + .gap-group {
+  padding-top: 24px;
+  border-top: 1px solid rgba(18, 16, 15, 0.08);
 }
 
 .gap-group__label {
   display: grid;
-  gap: 6px;
-  padding-top: 6px;
+  gap: 8px;
+  padding-top: 8px;
 }
 
 .gap-group__label strong {
@@ -423,17 +429,18 @@ body::before {
 .gap-scenario__value span,
 .table-row__meta {
   font-size: 0.88rem;
+  line-height: 1.6;
   color: var(--muted);
 }
 
 .gap-group__stack {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .gap-scenario {
   display: grid;
-  grid-template-columns: minmax(0, 168px) minmax(0, 1fr) 94px;
+  grid-template-columns: minmax(0, 178px) minmax(0, 1fr) 104px;
   gap: 16px;
   align-items: center;
 }
@@ -644,7 +651,7 @@ body::before {
 .open-proxy {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 22px;
 }
 
 .proxy-card,
@@ -661,21 +668,54 @@ body::before {
   font-size: 0.88rem;
   line-height: 1.7;
   color: var(--muted);
+  max-width: 18ch;
 }
 
 .proxy-card__meta {
   display: grid;
-  gap: 12px;
-  margin-top: 20px;
+  gap: 16px;
+  margin-top: 22px;
 }
 
-.proxy-card__meta span {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  font-size: 0.9rem;
-  line-height: 1.7;
+.proxy-card__group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 12px;
+}
+
+.proxy-card__group + .proxy-card__group {
+  padding-top: 16px;
+  border-top: 1px solid rgba(18, 16, 15, 0.08);
+}
+
+.proxy-card__item {
+  display: grid;
+  gap: 8px;
+  padding: 14px 14px 12px;
+  border-radius: 18px;
+  background: rgba(18, 16, 15, 0.035);
+}
+
+.proxy-card__item b {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  font-weight: 600;
   color: var(--muted);
+}
+
+.proxy-card__item strong {
+  display: block;
+  font-family: var(--numeric);
+  font-size: 1.14rem;
+  line-height: 1.28;
+  color: var(--ink);
+  font-variant-numeric: lining-nums;
+}
+
+.proxy-card__group--ratios .proxy-card__item strong {
+  font-size: 1.02rem;
+  line-height: 1.4;
 }
 
 .strategy-cards {
@@ -821,9 +861,22 @@ body::before {
     margin-top: 60px;
   }
 
+  .gap-overview {
+    gap: 22px;
+  }
+
   .gap-group,
   .gap-scenario {
     grid-template-columns: 1fr;
+  }
+
+  .gap-group {
+    gap: 14px;
+    padding: 8px 0 12px;
+  }
+
+  .gap-group + .gap-group {
+    padding-top: 18px;
   }
 
   .range-bar__head {
@@ -836,5 +889,9 @@ body::before {
 
   .gap-scenario__value {
     text-align: left;
+  }
+
+  .proxy-card__group {
+    grid-template-columns: 1fr;
   }
 }

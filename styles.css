@@ -397,6 +397,24 @@ body::before {
   max-width: 42ch;
 }
 
+.card-head--stacked {
+  display: grid;
+  gap: 14px;
+  align-items: start;
+}
+
+.card-head--stacked p:last-child {
+  max-width: 72ch;
+}
+
+.card-head--stacked .eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  line-height: 1.45;
+}
+
 .gap-overview {
   display: grid;
   gap: 30px;
@@ -655,12 +673,9 @@ body::before {
   grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
 }
 
-.region-layout {
-  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-}
-
+.region-layout,
 .turnover-layout {
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  grid-template-columns: 1fr;
 }
 
 .open-proxy {
@@ -947,23 +962,18 @@ body::before {
   margin-top: 16px;
 }
 
-.region-layout,
-.turnover-layout {
-  align-items: start;
-}
-
 .region-map {
   display: grid;
-  grid-template-columns: 0.9fr 1fr 0.82fr;
-  grid-template-areas:
-    ". taipei east"
-    "north central east"
-    "south kaoping east";
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
 }
 
 .region-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 308px;
   padding: 22px;
   border-radius: 28px;
   border: 1px solid rgba(18, 16, 15, 0.08);
@@ -979,30 +989,6 @@ body::before {
   inset: 0;
   pointer-events: none;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.56), transparent 55%);
-}
-
-.region-card--taipei {
-  grid-area: taipei;
-}
-
-.region-card--north {
-  grid-area: north;
-}
-
-.region-card--central {
-  grid-area: central;
-}
-
-.region-card--south {
-  grid-area: south;
-}
-
-.region-card--kaoping {
-  grid-area: kaoping;
-}
-
-.region-card--east {
-  grid-area: east;
 }
 
 .region-card__rank {
@@ -1031,8 +1017,10 @@ body::before {
 .region-card__foot {
   display: grid;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: auto;
+  min-height: 92px;
   padding-top: 16px;
+  padding-bottom: 2px;
   border-top: 1px solid rgba(18, 16, 15, 0.08);
   font-size: 0.88rem;
   line-height: 1.7;
@@ -1044,12 +1032,17 @@ body::before {
   padding: 34px;
 }
 
+.driver-scopes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .turnover-kpi__value {
   font-size: clamp(1.8rem, 3vw, 2.75rem);
 }
 
 .structure-level-grid {
   margin-top: 22px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .structure-card__head span {
@@ -1152,10 +1145,10 @@ body::before {
 
   .region-map {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas:
-      "taipei east"
-      "north central"
-      "south kaoping";
+  }
+
+  .driver-scopes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .range-bar__meta {
@@ -1253,13 +1246,10 @@ body::before {
 
   .region-map {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      "taipei"
-      "north"
-      "central"
-      "south"
-      "kaoping"
-      "east";
+  }
+
+  .driver-scopes {
+    grid-template-columns: 1fr;
   }
 
   .proxy-card__group {

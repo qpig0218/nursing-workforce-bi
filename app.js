@@ -446,9 +446,12 @@ function renderRegionalGapMap() {
     );
     return;
   }
-  const maxRate = Math.max(...data.regionalGapMap.map((item) => item.bedPressure.midShortageRate));
+  const orderedRegions = [...data.regionalGapMap].sort(
+    (a, b) => positiveNumber(a.intensityRank) - positiveNumber(b.intensityRank)
+  );
+  const maxRate = Math.max(...orderedRegions.map((item) => item.bedPressure.midShortageRate));
 
-  container.innerHTML = data.regionalGapMap
+  container.innerHTML = orderedRegions
     .map((region) => {
       const intensity = 0.12 + (region.bedPressure.midShortageRate / maxRate) * 0.78;
       const leadHospital = region.topHospitals[0];

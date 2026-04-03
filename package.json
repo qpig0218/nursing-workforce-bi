@@ -1,0 +1,18 @@
+{
+  "name": "nursing-workforce-bi",
+  "version": "1.0.0",
+  "description": "Editorial BI page for hospital nursing workforce demand",
+  "main": "build-data.js",
+  "scripts": {
+    "build-data": "node build-data.js",
+    "preview": "python -m http.server 4173",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

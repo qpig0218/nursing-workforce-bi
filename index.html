@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>114年度醫院護產人力需求雜誌式 BI</title>
+    <meta
+      name="description"
+      content="以雜誌排版呈現 114 年度醫院護產人力調查結果，聚焦急性一般病床、三班護病比與 bed-based shortage。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,600;6..96,700;6..96,800&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <main class="page">
+      <section class="hero panel">
+        <div class="hero__intro">
+          <p class="eyebrow">Nursing Demand Feature / 114 Survey Intelligence</p>
+          <h1 id="hero-title"></h1>
+          <p id="hero-subtitle" class="deck"></p>
+        </div>
+        <aside class="hero__aside">
+          <span class="aside-label">洞察反思</span>
+          <p id="hero-note"></p>
+        </aside>
+        <div id="hero-kpis" class="hero-kpis"></div>
+      </section>
+
+      <section class="ribbon panel panel--tight">
+        <div class="ribbon__cell">
+          <span>官方三班護病比標尺</span>
+          <strong id="standard-summary"></strong>
+        </div>
+        <div class="ribbon__cell">
+          <span>政策壓力帶</span>
+          <strong id="policy-context"></strong>
+        </div>
+        <div class="ribbon__cell ribbon__cell--warn">
+          <span>資料提醒</span>
+          <strong id="data-warning"></strong>
+        </div>
+      </section>
+
+      <section class="section-head">
+        <p class="section-index">01</p>
+        <div>
+          <h2>三個層級，不同床量壓力</h2>
+          <p>把現行開床、急性班表人力與三班標準放進同一個尺度後，缺口就不再只是 survey 上的一個總數。</p>
+        </div>
+      </section>
+
+      <section class="level-layout">
+        <div id="level-cards" class="level-cards"></div>
+        <div class="panel chart-panel">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Open Beds vs. Staffing</p>
+              <h3>各層級現行班表與三種推估需求</h3>
+            </div>
+            <p>同一組現行班表，分別對照低、中、高三種床位假設，直接看每個層級的需求變化與缺口幅度。</p>
+          </div>
+          <div id="gap-overview" class="gap-overview"></div>
+        </div>
+      </section>
+
+      <section class="section-head">
+        <p class="section-index">02</p>
+        <div>
+          <h2>低、中、高推估</h2>
+          <p>這次的 low / mid / high 不再是抽象缺工情境，而是不同床位與占床假設下的 bed-based demand range。</p>
+        </div>
+      </section>
+
+      <section class="scenario-layout">
+        <div id="scenario-scale" class="panel range-panel"></div>
+        <div id="scenario-cards" class="scenario-cards"></div>
+      </section>
+
+      <section class="section-head">
+        <p class="section-index">03</p>
+        <div>
+          <h2>急性床量訊號與未來策略</h2>
+          <p>把健保申報急性病床、衛福部現行開床與班表實況一起看，會看到哪些醫院的開床速度已經跑到 staffing 前面。</p>
+        </div>
+      </section>
+
+      <section class="signal-layout">
+        <div class="panel">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Reported vs. Open</p>
+              <h3>層級別急性床量與班表實況</h3>
+            </div>
+            <p>這裡已經不是 survey proxy，而是用院級急性一般病床資料直接對照班表；唯一還沒補齊的是 permit-bed layer。</p>
+          </div>
+          <div id="open-proxy" class="open-proxy"></div>
+        </div>
+        <div class="panel">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Future Moves</p>
+              <h3>未來可能策略</h3>
+            </div>
+            <p>真正需要的不是單點補人，而是把招募、留任與床位治理接成一條決策線。</p>
+          </div>
+          <div id="strategy-cards" class="strategy-cards"></div>
+        </div>
+      </section>
+
+      <section class="section-head">
+        <p class="section-index">04</p>
+        <div>
+          <h2>前線名單</h2>
+          <p>一邊是中推估缺口最深的醫院，一邊是「開床拉高補班壓力」最明顯的醫院，反映的是兩種不同的現場風險。</p>
+        </div>
+      </section>
+
+      <section class="frontline-layout">
+        <div class="panel table-panel">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Mid-Case Watchlist</p>
+              <h3>中推估缺口最深</h3>
+            </div>
+            <p>以「現行開床 × 當期占床率」下仍需增補的三班人力排序。</p>
+          </div>
+          <div id="shortage-table" class="table-list"></div>
+        </div>
+        <div class="panel table-panel">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Open-Bed Pressure</p>
+              <h3>開床推高壓力</h3>
+            </div>
+            <p>比較健保申報床數與現行開床數，找出最需要即刻補班的開床差。</p>
+          </div>
+          <div id="vacancy-table" class="table-list"></div>
+        </div>
+      </section>
+
+      <section class="panel footer-panel">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Method & Limits</p>
+            <h3>資料來源與限制</h3>
+          </div>
+          <p>這一頁刻意把漂亮的雜誌排版和不漂亮的資料缺口放在一起，因為 bed-based forecast 不能只看結論。</p>
+        </div>
+        <div id="quality-notes"></div>
+        <div id="source-links" class="source-links"></div>
+      </section>
+    </main>
+
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

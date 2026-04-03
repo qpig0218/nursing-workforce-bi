@@ -381,6 +381,7 @@ body::before {
 .range-panel,
 .table-panel,
 .footer-panel,
+.panel--content,
 .signal-layout > .panel {
   padding: 34px;
 }
@@ -876,7 +877,7 @@ body::before {
 .driver-reason,
 .turnover-kpi,
 .structure-card {
-  padding: 16px 18px;
+  padding: 18px 20px;
   border-radius: 20px;
   border: 1px solid rgba(18, 16, 15, 0.08);
   background: rgba(255, 255, 255, 0.52);
@@ -950,7 +951,7 @@ body::before {
 
 .tier-bridge__row,
 .driver-card {
-  padding: 22px;
+  padding: 24px;
   border-radius: 24px;
   border: 1px solid rgba(18, 16, 15, 0.08);
   background: rgba(255, 255, 255, 0.5);
@@ -974,7 +975,7 @@ body::before {
   display: flex;
   flex-direction: column;
   min-height: 308px;
-  padding: 22px;
+  padding: 24px;
   border-radius: 28px;
   border: 1px solid rgba(18, 16, 15, 0.08);
   background:
@@ -1010,16 +1011,16 @@ body::before {
 .region-card__meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 18px;
+  gap: 14px;
+  margin-top: 20px;
 }
 
 .region-card__foot {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   margin-top: auto;
   min-height: 92px;
-  padding-top: 16px;
+  padding-top: 18px;
   padding-bottom: 2px;
   border-top: 1px solid rgba(18, 16, 15, 0.08);
   font-size: 0.88rem;
@@ -1034,6 +1035,7 @@ body::before {
 
 .driver-scopes {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
 }
 
 .turnover-kpi__value {
@@ -1043,6 +1045,7 @@ body::before {
 .structure-level-grid {
   margin-top: 22px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .structure-card__head span {
@@ -1053,17 +1056,18 @@ body::before {
 .structure-card__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 16px;
+  gap: 14px;
+  margin-top: 18px;
 }
 
 .driver-card__themes {
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .driver-card__reasons {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 18px;
+  gap: 14px;
+  margin-top: 20px;
 }
 
 .table-list {
@@ -1167,6 +1171,7 @@ body::before {
   .range-panel,
   .table-panel,
   .footer-panel,
+  .panel--content,
   .signal-layout > .panel {
     padding: 22px;
   }
